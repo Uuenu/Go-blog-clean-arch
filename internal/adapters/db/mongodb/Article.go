@@ -16,10 +16,18 @@ func NewArticleStorage(db *mongo.Database) *articleStorage {
 	}
 }
 
+func (a *articleStorage) Create(article entity.Article) error {
+	panic("implement me")
+}
+
 func (a *articleStorage) GetOne(ID string) (entity.Article, error) {
 	panic("Implement me")
 }
 
 func (a *articleStorage) GetAll() ([]entity.Article, error) {
 	panic("Implement me")
+}
+
+func (a *articleStorage) Update(ID string, artile entity.Article) {
+	panic("implement me")
 }
