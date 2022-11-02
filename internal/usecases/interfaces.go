@@ -52,5 +52,10 @@ type (
 	}
 
 	SessionRepo interface {
+		Create(ctx context.Context, s entity.Session) error
+		FindByID(ctx context.Context, sid string) (entity.Session, error)
+		FindAll(ctx context.Context) ([]entity.Session, error)
+		Delete(ctx context.Context, sid string) error
+		//DeleteAll(ctx context.Context) error
 	}
 )
