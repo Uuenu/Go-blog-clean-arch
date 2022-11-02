@@ -27,7 +27,7 @@ type (
 
 	// Article Interface  (change entity.Article to DTO)
 	Article interface {
-		Create(context.Context, entity.Article) (string, error)
+		Create(ctx context.Context, article entity.Article) (string, error)
 
 		GetByID(ctx context.Context, id string) (entity.Article, error)
 
@@ -39,7 +39,7 @@ type (
 
 	// ArticleRepo Interface
 	ArticleRepo interface {
-		Create(context.Context, entity.Article) (string, error)
+		Create(ctx context.Context, article entity.Article) (string, error)
 
 		FindById(ctx context.Context, id string) (entity.Article, error)
 
