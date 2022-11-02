@@ -14,6 +14,7 @@ func NewRouter(handler *gin.Engine, l logging.Logger, auth usecases.Author, artc
 	h := handler.Group("/v1")
 	{
 		newArticleRoutes(h, artcl, l)
-		//newAuthorRoutes(h, auth, l)
+		newAuthorRoutes(h, auth, l)
+		//newSessionRoutes(h, session, l)
 	}
 }

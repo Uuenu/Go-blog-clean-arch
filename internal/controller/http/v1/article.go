@@ -20,20 +20,20 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, l loggin
 
 	h := handler.Group("/article")
 	{
-		h.GET("/:id", r.GetByID) // get by id
-		h.POST("")               // create
-		h.GET("")                //get all
-		h.PUT("/:id")            // update article
-		h.DELETE("/:id")         //delete by id
+		h.GET("/:article_id", r.GetByID) // get by id
+		h.POST("")                       // create
+		h.GET("")                        //get all
+		h.PUT("/:article_id")            // update article
+		h.DELETE("/:article_id")         //delete by id
 	}
 }
 
 func (r *articleRoutes) GetByID(c *gin.Context) {
-	aid := c.Param("id")
+	aid := c.Param("article_id")
 
 	acc, err := r.artcl.GetByID(c.Request.Context(), aid)
 	if err != nil {
-		r.l.Error(fmt.Errorf("http - v1 - auth - get: %w", err))
+		r.l.Error(fmt.Errorf("http - v1 - article - get: %w", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
