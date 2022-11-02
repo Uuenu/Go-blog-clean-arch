@@ -47,4 +47,10 @@ type (
 
 		Delete(ctx context.Context, id string, aid string) error
 	}
+
+	Session interface {
+	}
+
+	SessionRepo interface {
+	}
 )
