@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 	"go-blog-ca/internal/domain/entity"
 )
 
@@ -15,16 +16,27 @@ func NewArticleUseCase(r ArticleRepo) *ArticleUseCases {
 	}
 }
 
-func (uc *ArticleUseCases) Create(context.Context, entity.Article) (string, error) {
-	panic("Implement me")
+func (uc *ArticleUseCases) Create(ctx context.Context, article entity.Article) (string, error) {
+	//TODO change entity.Article on DTO or somthing else
+	panic("implement me")
 }
 
 func (uc *ArticleUseCases) GetByID(ctx context.Context, id string) (entity.Article, error) {
-	panic("Implement me")
+	article, err := uc.repo.FindById(ctx, id)
+	if err != nil {
+		return entity.Article{}, fmt.Errorf("ArticleUseCase - GetByID - uc.repo.FindByID. error: %v", err)
+	}
+
+	return article, nil
 }
 
 func (uc *ArticleUseCases) GetAll(ctx context.Context) ([]entity.Article, error) {
-	panic("Implement me")
+	articles, err := uc.repo.FindAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("ArticleUseCase - GetAll - uc.repo.FindAll. error: %v", err)
+	}
+
+	return articles, nil
 }
 
 func (uc *ArticleUseCases) Delete(ctx context.Context, id string, aid string) error {
