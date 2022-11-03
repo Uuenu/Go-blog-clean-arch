@@ -11,6 +11,7 @@ import (
 
 type SessionRepo struct {
 	collection *mongo.Collection
+	//logger
 }
 
 func NewSessionRepo(db *mongo.Database) *SessionRepo {
@@ -42,9 +43,32 @@ func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session,
 
 	return s, nil
 }
-func (r *SessionRepo) FindAll(ctx context.Context) ([]entity.Session, error) {
+func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session, error) {
+	// find all authors session
 	panic("implement me")
 }
 func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
+
+	dresult, err := r.collection.DeleteOne(ctx, bson.M{"_id": sid})
+	if err != nil {
+
+		if err == mongo.ErrNoDocuments {
+			//TODO apperrors
+			// reutnr fmt.Errorf("r.DeleteOne: %w", err)
+			return nil
+		}
+
+		return fmt.Errorf("SessionRepo - Delete - Deleteone: %w", err)
+	}
+
+	if dresult.DeletedCount != 0 {
+		return fmt.Errorf("SessionRepo - Delete - DeleteCount: %d", dresult.DeletedCount)
+	}
+
+	return nil
+}
+
+func (r *SessionRepo) DeleteAll(ctx context.Context, aid, sid string) error {
+	// delete add authors session excluding current session
 	panic("implement me")
 }

@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type AuthorRepo struct {
 	collection *mongo.Collection // or *mongo.Database
+	// logger
 }
 
 func NewAuthorRepo(db *mongo.Database) *AuthorRepo {
@@ -34,9 +36,36 @@ func (r *AuthorRepo) Create(ctx context.Context, author entity.Author) (string, 
 }
 
 func (r *AuthorRepo) FindByID(ctx context.Context, id string) (entity.Author, error) {
-	panic("Implement me")
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - ObjectID from Hex id:%s error: %v", id, err)
+	}
+
+	result := r.collection.FindOne(ctx, bson.M{"_id": oid})
+
+	if result.Err() != nil {
+		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - FindOne. error: %v", err)
+	}
+
+	var author entity.Author
+
+	if err := result.Decode(author); err != nil {
+		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - Decode result. error: %v", err)
+	}
+
+	return author, nil
+}
+
+func (r *AuthorRepo) FindByEmail(ctx context.Context, email string) (entity.Author, error) {
+	var author entity.Author
+	if err := r.collection.FindOne(ctx, bson.M{"email": email}).Decode(&author); err != nil {
+		// TODO apperror's
+		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByEmail - FindOne and Decode. error: %v", err)
+	}
+	return author, nil
 }
 
 func (r *AuthorRepo) FindAll(ctx context.Context) ([]entity.Author, error) {
-	panic("Implement me")
+	panic("implement me")
 }

@@ -26,14 +26,10 @@ func newAuthorRoutes(handler *gin.RouterGroup, auth usecases.Author, l logging.L
 		{
 			authenticated.PUT("/:author_id")
 			authenticated.DELETE("/:autrhor_id")
-			authenticated.GET("/:author_id", r.ArticleByID) // get by id
-			authenticated.GET("")                           //get all
-			//authenticated.
+			authenticated.POST("/:author_id")
 
 		}
 
-		h.POST("signup")                    // create
-		h.POST("signin")                    // auth
 		h.GET("/:author_id", r.ArticleByID) // get by id
 		h.GET("")                           //get all
 

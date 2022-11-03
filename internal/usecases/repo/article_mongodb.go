@@ -24,7 +24,7 @@ func NewArticleRepo(db *mongo.Database) *ArticleRepo {
 func (r *ArticleRepo) Create(ctx context.Context, article entity.Article) (string, error) {
 	result, err := r.collection.InsertOne(ctx, article)
 	if err != nil {
-		return "", fmt.Errorf("failed to create article due to error %v", err)
+		return "", fmt.Errorf("ArticleRepo - Create - InsertOne: %w", err)
 	}
 
 	oid, ok := result.InsertedID.(primitive.ObjectID)
@@ -32,13 +32,13 @@ func (r *ArticleRepo) Create(ctx context.Context, article entity.Article) (strin
 		return oid.Hex(), nil
 	}
 
-	return "", fmt.Errorf("failed to convert oid to hex (oid):%s", oid)
+	return "", fmt.Errorf("ArticleRepo - ObjectID to Hex: %s", oid)
 }
 
 func (r *ArticleRepo) FindById(ctx context.Context, id string) (entity.Article, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return entity.Article{}, fmt.Errorf("failed to convert hex to ObjectID. hex: %s", id)
+		return entity.Article{}, fmt.Errorf("ArticleRepo - Hex to ObjectID: %s", id)
 	}
 
 	filter := bson.M{"_id": oid}
@@ -46,13 +46,13 @@ func (r *ArticleRepo) FindById(ctx context.Context, id string) (entity.Article, 
 	result := r.collection.FindOne(ctx, filter)
 
 	if result.Err() != nil {
-		return entity.Article{}, fmt.Errorf("failed to FindOne Article by id: %s due to error: %v", id, result.Err())
+		return entity.Article{}, fmt.Errorf("ArticleRepo - FindById - FindOne (id: %s) (error: %w)", id, result.Err())
 	}
 
 	var article entity.Article
 
 	if err := result.Decode(article); err != nil {
-		return entity.Article{}, fmt.Errorf("failde to decode article id:%s due to error: %v ", id, err)
+		return entity.Article{}, fmt.Errorf("ArticleRepo - FindByID - Decode result. error: %v", err)
 	}
 
 	return article, nil
@@ -73,7 +73,22 @@ func (r *ArticleRepo) FindAll(ctx context.Context) ([]entity.Article, error) {
 	return articles, nil
 }
 
-func (r *ArticleRepo) Delete(ctx context.Context, id string, aid string) error {
-	// TODO
-	panic("Implement me")
+func (r *ArticleRepo) Delete(ctx context.Context, id string) error {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("failed to convert hex to ObjectID error: %v", err)
+	}
+
+	filter := bson.M{"_id": oid}
+
+	dresult, err := r.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("failed to DeleteOne. error: %v", err)
+	}
+
+	if dresult.DeletedCount != 1 {
+		return fmt.Errorf("DeleteCount != 1. %d", dresult.DeletedCount)
+	}
+
+	return nil
 }

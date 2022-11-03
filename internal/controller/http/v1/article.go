@@ -12,11 +12,12 @@ import (
 
 type articleRoutes struct {
 	artcl usecases.Article
+	s     usecases.Session
 	l     logging.Logger
 }
 
-func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, l logging.Logger) {
-	r := articleRoutes{artcl, l}
+func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecases.Session, l logging.Logger) {
+	r := articleRoutes{artcl, s, l}
 
 	h := handler.Group("/article")
 	{
@@ -90,6 +91,23 @@ func (r *articleRoutes) Update(c *gin.Context) {
 	panic("implement me")
 }
 
+type doDeleteRequest struct {
+	//AuthorID  string `json:"article_id"` // aid from article == aid from session
+	ArticleID string `json:"author_id"`
+	SessionID string `json:"session_id"`
+}
+
 func (r *articleRoutes) Delete(c *gin.Context) {
-	panic("implement me")
+	var request doDeleteRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		// TODO logger and error response
+		return
+	}
+
+	// article, err := r.artcl.GetByID(c.Request.Context(), request.ArticleID)
+	// if err != nil {
+	// 	//TODO error
+	// 	return
+	// }
+
 }

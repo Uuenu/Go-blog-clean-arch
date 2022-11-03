@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 	"go-blog-ca/internal/domain/entity"
 )
 
@@ -16,11 +17,33 @@ func NewAuthorUseCase(r AuthorRepo) *AuthorUseCase {
 }
 
 func (uc *AuthorUseCase) Create(ctx context.Context, author entity.Author) (string, error) {
-	panic("Implement me")
+
+	//TODO Generate password hash
+
+	aid, err := uc.repo.Create(ctx, author)
+	if err != nil {
+		return "", fmt.Errorf("AuthorUseCase - Create - us.repo.Create error: %v", err)
+	}
+
+	return aid, nil
 }
 
 func (uc *AuthorUseCase) GetByID(ctx context.Context, id string) (entity.Author, error) {
-	panic("Implement me")
+	author, err := uc.repo.FindByID(ctx, id)
+	if err != nil {
+		return entity.Author{}, fmt.Errorf("AuthorUseCase - GetByID - us.repo.FindByID error: %v", err)
+	}
+
+	return author, nil
+}
+
+func (uc *AuthorUseCase) GetByEmail(ctx context.Context, email string) (entity.Author, error) {
+	author, err := uc.repo.FindByEmail(ctx, email)
+	if err != nil {
+		return entity.Author{}, fmt.Errorf("AuthorUseCase - GetByEmail - us.repo.FindByEmail error: %v", err)
+	}
+
+	return author, nil
 }
 
 func (uc *AuthorUseCase) GetAll(ctx context.Context) ([]entity.Author, error) {

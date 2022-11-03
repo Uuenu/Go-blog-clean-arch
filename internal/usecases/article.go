@@ -7,18 +7,27 @@ import (
 )
 
 type ArticleUseCases struct {
-	repo ArticleRepo
+	repo    ArticleRepo
+	author  Author
+	session Session
 }
 
-func NewArticleUseCase(r ArticleRepo) *ArticleUseCases {
+func NewArticleUseCase(r ArticleRepo, a Author, s Session) *ArticleUseCases {
 	return &ArticleUseCases{
-		repo: r,
+		repo:    r,
+		author:  a,
+		session: s,
 	}
 }
 
 func (uc *ArticleUseCases) Create(ctx context.Context, article entity.Article) (string, error) {
 	//TODO change entity.Article on DTO or somthing else
-	panic("implement me")
+	aid, err := uc.repo.Create(ctx, article)
+	if err != nil {
+		return "", fmt.Errorf("ArticleUseCase - Create - uc.repo.Create. error: %v", err)
+	}
+
+	return aid, nil
 }
 
 func (uc *ArticleUseCases) GetByID(ctx context.Context, id string) (entity.Article, error) {
@@ -40,5 +49,6 @@ func (uc *ArticleUseCases) GetAll(ctx context.Context) ([]entity.Article, error)
 }
 
 func (uc *ArticleUseCases) Delete(ctx context.Context, id string, aid string) error {
-	panic("Implement me")
+
+	return nil
 }
