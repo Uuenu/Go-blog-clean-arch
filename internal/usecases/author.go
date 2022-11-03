@@ -7,12 +7,14 @@ import (
 )
 
 type AuthorUseCase struct {
-	repo AuthorRepo
+	repo    AuthorRepo
+	session Session
 }
 
-func NewAuthorUseCase(r AuthorRepo) *AuthorUseCase {
+func NewAuthorUseCase(r AuthorRepo, s Session) *AuthorUseCase {
 	return &AuthorUseCase{
-		repo: r,
+		repo:    r,
+		session: s,
 	}
 }
 

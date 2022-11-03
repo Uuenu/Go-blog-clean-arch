@@ -2,7 +2,9 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 	"go-blog-ca/internal/domain/entity"
+	"go-blog-ca/pkg/apperrors"
 )
 
 type SessionUseCase struct {
@@ -16,19 +18,41 @@ func NewSessionUseCase(r SessionRepo) *SessionUseCase {
 }
 
 func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Session, error) {
-	panic("implement me")
+	sess, err := entity.NewSession(aid)
+	if err != nil {
+		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - entity.NewSession: %w", err)
+	}
+
+	if err := uc.repo.Create(ctx, sess); err != nil {
+		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - uc.repo.Create: %w", err)
+	}
+
+	return sess, nil
 }
 
 func (uc *SessionUseCase) GetByID(ctx context.Context, sid string) (entity.Session, error) {
-	panic("implement me")
+	sess, err := uc.repo.FindByID(ctx, sid)
+	if err != nil {
+		return entity.Session{}, fmt.Errorf("SessionUseCase  - Create - uc.repo.FindByID")
+	}
+
+	return sess, nil
 }
 
-func (uc *SessionUseCase) GetAll(ctx context.Context) []entity.Session {
+func (uc *SessionUseCase) GetAll(ctx context.Context, aid string) []entity.Session {
 	panic("implement me")
 }
 
 func (uc *SessionUseCase) Terminate(ctx context.Context, sid, currSid string) error {
-	panic("implement me")
+	if sid == currSid {
+		return fmt.Errorf("SessionUseCase - Terminate: %w", apperrors.ErrSessionNotTerminated)
+	}
+
+	if err := uc.repo.Delete(ctx, sid); err != nil {
+		return fmt.Errorf("SessionUseCase - Terminate - s.repo.Delete: %w", err)
+	}
+
+	return nil
 }
 
 func (uc *SessionUseCase) TerminateAll(ctx context.Context, aid, sid string) error {
