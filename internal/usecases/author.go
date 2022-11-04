@@ -49,5 +49,9 @@ func (uc *AuthorUseCase) GetByEmail(ctx context.Context, email string) (entity.A
 }
 
 func (uc *AuthorUseCase) GetAll(ctx context.Context) ([]entity.Author, error) {
-	panic("Implement me")
+	authors, err := uc.repo.FindAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("AuthorUseCase - GetAll - us.repo.FindAll error: %v", err)
+	}
+	return authors, nil
 }

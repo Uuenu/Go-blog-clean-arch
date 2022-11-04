@@ -21,16 +21,16 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 
 	h := handler.Group("/article")
 	{
-		h.GET("/:article_id", r.GetByID) // get by id
-		h.POST("")                       // create
-		h.GET("")                        //get all
-		h.PUT("/:article_id")            // update article
-		h.DELETE("/:article_id")         //delete by id
+		h.GET("/:id", r.GetByID) // get by id
+		h.POST("")               // create
+		h.GET("")                //get all
+		h.PUT("/:id")            // update article
+		h.DELETE("/:id")         //delete by id
 	}
 }
 
 func (r *articleRoutes) GetByID(c *gin.Context) {
-	aid := c.Param("article_id")
+	aid := c.Param("id")
 
 	acc, err := r.artcl.GetByID(c.Request.Context(), aid)
 	if err != nil {
@@ -93,7 +93,7 @@ func (r *articleRoutes) Update(c *gin.Context) {
 
 type doDeleteRequest struct {
 	//AuthorID  string `json:"article_id"` // aid from article == aid from session
-	ArticleID string `json:"author_id"`
+	ArticleID string `json:"id"`
 	SessionID string `json:"session_id"`
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
+	"go-blog-ca/pkg/apperrors"
 )
 
 type ArticleUseCases struct {
@@ -48,7 +49,21 @@ func (uc *ArticleUseCases) GetAll(ctx context.Context) ([]entity.Article, error)
 	return articles, nil
 }
 
-func (uc *ArticleUseCases) Delete(ctx context.Context, id string, aid string) error {
+func (uc *ArticleUseCases) Delete(ctx context.Context, id string, sid string) error {
 
-	return nil
+	sess, err := uc.session.GetByID(ctx, sid)
+	if err != nil {
+		return fmt.Errorf("ArticleUseCase - Delete - uc.session.GetByID: %v", err)
+	}
+
+	article, err := uc.repo.FindById(ctx, id)
+	if err != nil {
+		return fmt.Errorf("ArticleUseCase - Delete - uc.repo.FindByID: %v", err)
+	}
+
+	if sess.AuthorID == article.AuthorID {
+		return uc.repo.Delete(ctx, id, article.AuthorID)
+	}
+
+	return fmt.Errorf("ArticleUseCase - Delete: %v", apperrors.ErrArticleAccessDenied)
 }

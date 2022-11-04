@@ -8,12 +8,14 @@ import (
 )
 
 type SessionUseCase struct {
-	repo SessionRepo
+	repo   SessionRepo
+	author Author
 }
 
-func NewSessionUseCase(r SessionRepo) *SessionUseCase {
+func NewSessionUseCase(r SessionRepo, a Author) *SessionUseCase {
 	return &SessionUseCase{
-		repo: r,
+		repo:   r,
+		author: a,
 	}
 }
 

@@ -24,21 +24,20 @@ func newAuthorRoutes(handler *gin.RouterGroup, auth usecases.Author, l logging.L
 	{
 		authenticated := h.Group("/") // add sessionMiddleware()
 		{
-			authenticated.PUT("/:author_id")
-			authenticated.DELETE("/:autrhor_id")
-			authenticated.POST("/:author_id")
+			authenticated.PUT("/:id")
+			authenticated.DELETE("/:id")
 
 		}
 
-		h.GET("/:author_id", r.ArticleByID) // get by id
-		h.GET("")                           //get all
+		h.GET("/:id", r.ArticleByID) // get by id
+		h.GET("")                    //get all
 
 	}
 
 }
 
 func (r *authorRoutes) ArticleByID(c *gin.Context) {
-	aid := c.Param("author_id")
+	aid := c.Param("id")
 
 	acc, err := r.auth.GetByID(c.Request.Context(), aid)
 	if err != nil {
