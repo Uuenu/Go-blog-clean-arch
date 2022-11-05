@@ -41,8 +41,13 @@ func (uc *SessionUseCase) GetByID(ctx context.Context, sid string) (entity.Sessi
 	return sess, nil
 }
 
-func (uc *SessionUseCase) GetAll(ctx context.Context, aid string) []entity.Session {
-	panic("implement me")
+func (uc *SessionUseCase) GetAll(ctx context.Context, aid string) ([]entity.Session, error) {
+	sessions, err := uc.repo.FindAll(ctx, aid)
+	if err != nil {
+		return nil, fmt.Errorf("SessionUseCase - GetAll - uc.repo.GetAll: %w", err)
+	}
+
+	return sessions, nil
 }
 
 func (uc *SessionUseCase) Terminate(ctx context.Context, sid, currSid string) error {
@@ -58,5 +63,8 @@ func (uc *SessionUseCase) Terminate(ctx context.Context, sid, currSid string) er
 }
 
 func (uc *SessionUseCase) TerminateAll(ctx context.Context, aid, sid string) error {
-	panic("implement me")
+	if err := uc.repo.DeleteAll(ctx, aid, sid); err != nil {
+		return fmt.Errorf("SessionUseCase - TerminateAll - s.repo.DeleteAll")
+	}
+	return nil
 }
