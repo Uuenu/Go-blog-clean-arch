@@ -7,14 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(handler *gin.Engine, l logging.Logger, auth usecases.Author, artcl usecases.Article, s usecases.Session) {
+func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
+	artcl usecases.Article, auth usecases.AuthUseCase, session usecases.Session) {
+
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 
 	h := handler.Group("/v1")
 	{
-		newArticleRoutes(h, artcl, s, l)
-		newAuthorRoutes(h, auth, l)
-		//newSessionRoutes(h, session, l)
+		newArticleRoutes(h, artcl, session, l)
+		newAuthorRoutes(h, author, l)
+		newSessionRoutes(h, session, author, l)
+
 	}
 }

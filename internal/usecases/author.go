@@ -60,5 +60,6 @@ func (uc *AuthorUseCase) GetAll(ctx context.Context) ([]entity.Author, error) {
 }
 
 func (uc *AuthorUseCase) Delete(ctx context.Context, id string) error {
+	
 	return nil
 }
