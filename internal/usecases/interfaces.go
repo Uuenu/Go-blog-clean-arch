@@ -16,6 +16,8 @@ type (
 		GetByEmail(ctx context.Context, email string) (entity.Author, error)
 
 		GetAll(ctx context.Context) ([]entity.Author, error)
+
+		Delete(ctx context.Context, id string) error
 	}
 
 	// AuthorRepo Interface
@@ -27,6 +29,8 @@ type (
 		FindByEmail(ctx context.Context, email string) (entity.Author, error)
 
 		FindAll(ctx context.Context) ([]entity.Author, error)
+
+		Delete(ctx context.Context, id string) error
 	}
 
 	// ArticleUseCase Interface  (change entity.Article to DTO)

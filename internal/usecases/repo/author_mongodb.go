@@ -69,3 +69,22 @@ func (r *AuthorRepo) FindByEmail(ctx context.Context, email string) (entity.Auth
 func (r *AuthorRepo) FindAll(ctx context.Context) ([]entity.Author, error) {
 	panic("implement me")
 }
+
+func (r *AuthorRepo) Delete(ctx context.Context, id string) error {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("AuthorRepo - Delete - ObjectID from Hex. error: %v", err)
+	}
+
+	filter := bson.M{"_id": oid}
+	dresult, err := r.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("AuthorRepo - Delete - DeleteOne. error: %v", err)
+	}
+
+	if dresult.DeletedCount != 1 {
+		return fmt.Errorf("AuthorRepo - Delete - dresult.DeleteCount = %d. error: %v", dresult.DeletedCount, err)
+	}
+
+	return nil
+}

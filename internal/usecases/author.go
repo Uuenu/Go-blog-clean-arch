@@ -20,7 +20,10 @@ func NewAuthorUseCase(r AuthorRepo, s Session) *AuthorUseCase {
 
 func (uc *AuthorUseCase) Create(ctx context.Context, author entity.Author) (string, error) {
 
-	//TODO Generate password hash
+	//Generate password hash
+	if err := author.GeneratePasswordHash(); err != nil {
+		return "", fmt.Errorf("AuthorUseCase - Create - GeneratePasswordHash. error: %v", err)
+	}
 
 	aid, err := uc.repo.Create(ctx, author)
 	if err != nil {
@@ -54,4 +57,8 @@ func (uc *AuthorUseCase) GetAll(ctx context.Context) ([]entity.Author, error) {
 		return nil, fmt.Errorf("AuthorUseCase - GetAll - us.repo.FindAll error: %v", err)
 	}
 	return authors, nil
+}
+
+func (uc *AuthorUseCase) Delete(ctx context.Context, id string) error {
+	return nil
 }

@@ -64,7 +64,7 @@ func (uc *SessionUseCase) Terminate(ctx context.Context, sid, currSid string) er
 
 func (uc *SessionUseCase) TerminateAll(ctx context.Context, aid, sid string) error {
 	if err := uc.repo.DeleteAll(ctx, aid, sid); err != nil {
-		return fmt.Errorf("SessionUseCase - TerminateAll - s.repo.DeleteAll")
+		return fmt.Errorf("SessionUseCase - TerminateAll - s.repo.DeleteAll. error: %v", apperrors.ErrSessionNotTerminated)
 	}
 	return nil
 }
