@@ -1,8 +1,10 @@
 package v1
 
 import (
+	"fmt"
 	"go-blog-ca/internal/usecases"
 	"go-blog-ca/pkg/logging"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,18 +20,27 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, l logging.Logger) 
 		l:    l,
 	}
 
-	h := handler.Group("/") // sessionMiddleware
+	h := handler.Group("") // sessionMiddleware
 	{
 		//logout
 		h.GET("/logout", r.logout)
 	}
-	// signup
-	// signin
+	h.POST("/singin")
+	h.POST("/signout")
 }
 
 func (r *authRoutes) logout(c *gin.Context) {
 	//get sid
-	r.auth.Logout(c.Request.Context(), "")
+	sid := c.GetString("sid")
+	err := r.auth.Logout(c.Request.Context(), sid)
+	if err != nil {
+		r.l.Error(fmt.Errorf("authRoutes - logout - r.auth.Logout. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+
 }
 
 type doLoginRequest struct {
