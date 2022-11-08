@@ -86,6 +86,6 @@ type (
 		Delete(ctx context.Context, sid string) error
 
 		// DeleteAll account sessions by provided account id excluding current session.
-		DeleteAll(ctx context.Context, aid, sid string) error
+		DeleteAll(ctx context.Context, aid, currSid string) error
 	}
 )

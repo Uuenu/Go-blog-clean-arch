@@ -8,7 +8,7 @@ import (
 )
 
 func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
-	artcl usecases.Article, auth usecases.AuthUseCase, session usecases.Session) {
+	artcl usecases.Article, auth usecases.Auth, session usecases.Session) {
 
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
@@ -18,7 +18,7 @@ func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
 		newArticleRoutes(h, artcl, session, l)
 		newAuthorRoutes(h, author, l)
 		newSessionRoutes(h, session, author, l)
-		//newAuthRoutes(h, auth, l)
+		newAuthRoutes(h, auth, l)
 
 	}
 }

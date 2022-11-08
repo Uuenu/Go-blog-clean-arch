@@ -45,8 +45,21 @@ func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session,
 	return s, nil
 }
 func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session, error) {
-	// find all authors session
-	panic("implement me")
+
+	filter := bson.M{"account_id": bson.M{"": aid}}
+
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("SessionRepo - FindAll - Find. error: %v", err)
+	}
+
+	var sessions []entity.Session
+
+	if err := cursor.All(ctx, sessions); err != nil {
+		return nil, fmt.Errorf("SessionRepo - FindAll - cursor.All. error: %v", err)
+	}
+
+	return sessions, nil
 }
 func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
 
@@ -67,7 +80,7 @@ func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
 	return nil
 }
 
-func (r *SessionRepo) DeleteAll(ctx context.Context, aid, sid string) error {
+func (r *SessionRepo) DeleteAll(ctx context.Context, aid, currSid string) error {
 	// delete add authors session excluding current session
 	author_oid, err := primitive.ObjectIDFromHex(aid)
 	if err != nil {
@@ -75,7 +88,11 @@ func (r *SessionRepo) DeleteAll(ctx context.Context, aid, sid string) error {
 	}
 
 	//TODO add excluding sid session
-	filter := bson.M{"author_id": author_oid}
+	filter := bson.M{
+		"_id":       bson.M{"$ne": currSid}, // all session without currSid
+		"author_id": author_oid,
+	}
+
 	dresults, err := r.collection.DeleteMany(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("SessionRepo - DeleteAll - DeleteMany. error: %v", err)

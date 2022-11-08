@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
+	"go-blog-ca/pkg/apperrors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -46,6 +47,9 @@ func (r *ArticleRepo) FindById(ctx context.Context, id string) (entity.Article, 
 	result := r.collection.FindOne(ctx, filter)
 
 	if result.Err() != nil {
+		if result.Err() == mongo.ErrNoDocuments {
+			return entity.Article{}, fmt.Errorf("r.collection.FindOne. error: %v", apperrors.ErrArticleNotFound)
+		}
 		return entity.Article{}, fmt.Errorf("ArticleRepo - FindById - FindOne (id: %s) (error: %w)", id, result.Err())
 	}
 
@@ -62,6 +66,9 @@ func (r *ArticleRepo) FindAll(ctx context.Context) ([]entity.Article, error) {
 
 	cursor, err := r.collection.Find(ctx, bson.M{})
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("r.collection.FindOne. error: %v", apperrors.ErrArticleNotFound)
+		}
 		return nil, fmt.Errorf("failed to find all users due to error: %v", err)
 	}
 

@@ -20,13 +20,13 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, l logging.Logger) 
 		l:    l,
 	}
 
-	h := handler.Group("") // sessionMiddleware
+	h := handler.Group("/auth") // sessionMiddleware
 	{
 		//logout
 		h.GET("/logout", r.logout)
 	}
 	h.POST("/singin")
-	h.POST("/signout")
+	h.POST("/signup")
 }
 
 func (r *authRoutes) logout(c *gin.Context) {

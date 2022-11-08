@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
+	"go-blog-ca/pkg/apperrors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,6 +46,9 @@ func (r *AuthorRepo) FindByID(ctx context.Context, id string) (entity.Author, er
 	result := r.collection.FindOne(ctx, bson.M{"_id": oid})
 
 	if result.Err() != nil {
+		if result.Err() == mongo.ErrNoDocuments {
+			return entity.Author{}, fmt.Errorf("r.collection.FindOne. error: %v", apperrors.ErrAuthorNotFound)
+		}
 		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - FindOne. error: %v", err)
 	}
 
@@ -61,6 +65,9 @@ func (r *AuthorRepo) FindByEmail(ctx context.Context, email string) (entity.Auth
 	var author entity.Author
 	if err := r.collection.FindOne(ctx, bson.M{"email": email}).Decode(&author); err != nil {
 		// TODO apperror's
+		if err == mongo.ErrNoDocuments {
+			return entity.Author{}, fmt.Errorf("r.collection.FindOne. error: %v", apperrors.ErrAuthorNotFound)
+		}
 		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByEmail - FindOne and Decode. error: %v", err)
 	}
 	return author, nil
