@@ -59,7 +59,14 @@ func (uc *AuthorUseCase) GetAll(ctx context.Context) ([]entity.Author, error) {
 	return authors, nil
 }
 
-func (uc *AuthorUseCase) Delete(ctx context.Context, id string) error {
-	
+func (uc *AuthorUseCase) Delete(ctx context.Context, aid, sid string) error {
+	if err := uc.repo.Delete(ctx, aid); err != nil {
+		return fmt.Errorf("AuthorUseCase - Delete - us.repo.Delete. error: %v", err)
+	}
+
+	if err := uc.session.TerminateAll(ctx, aid, sid); err != nil {
+		return fmt.Errorf("AuthorUseCase - Delete - uc.session.TerminateAll. error: %v", err)
+	}
+
 	return nil
 }

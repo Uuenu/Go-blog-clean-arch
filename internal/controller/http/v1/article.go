@@ -13,6 +13,7 @@ import (
 type articleRoutes struct {
 	artcl usecases.Article
 	s     usecases.Session
+	
 	l     logging.Logger
 }
 
