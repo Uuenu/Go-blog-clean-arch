@@ -80,7 +80,7 @@ func (r *ArticleRepo) FindAll(ctx context.Context) ([]entity.Article, error) {
 	return articles, nil
 }
 
-func (r *ArticleRepo) Delete(ctx context.Context, id string) error {
+func (r *ArticleRepo) Delete(ctx context.Context, id, aid string) error {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return fmt.Errorf("failed to convert hex to ObjectID error: %v", err)

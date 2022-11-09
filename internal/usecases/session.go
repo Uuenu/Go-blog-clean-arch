@@ -9,15 +9,13 @@ import (
 )
 
 type SessionUseCase struct {
-	repo   SessionRepo
-	author Author
-	cfg    *config.Config
+	repo SessionRepo
+	cfg  *config.Config
 }
 
-func NewSessionUseCase(r SessionRepo, a Author) *SessionUseCase {
+func NewSessionUseCase(r SessionRepo) *SessionUseCase {
 	return &SessionUseCase{
-		repo:   r,
-		author: a,
+		repo: r,
 	}
 }
 

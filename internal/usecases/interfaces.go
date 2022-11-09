@@ -17,7 +17,7 @@ type (
 
 		GetAll(ctx context.Context) ([]entity.Author, error)
 
-		Delete(ctx context.Context, id string) error
+		Delete(ctx context.Context, aid, sid string) error
 	}
 
 	// AuthorRepo Interface
@@ -68,7 +68,7 @@ type (
 
 		GetByID(ctx context.Context, sid string) (entity.Session, error)
 
-		GetAll(ctx context.Context) []entity.Session
+		GetAll(ctx context.Context, aid string) ([]entity.Session, error)
 
 		Terminate(ctx context.Context, sid, currSid string) error
 
