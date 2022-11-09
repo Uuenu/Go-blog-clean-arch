@@ -14,8 +14,9 @@ mongodb:
   password:
   collection: users
 session:
-  tll: 60m
+  ttl: 60m
   cookie_key: "id"
   cookie_domain: ""
   cookie_secure: false
   cookie_httponly: true
+

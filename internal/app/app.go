@@ -41,4 +41,6 @@ func Run(cfg *config.Config) {
 	handler := gin.New()
 	v1.NewRouter(handler, l, authorUseCase, articleUseCase, authUseCase, sessionUseCase, cfg)
 
+	handler.Run()
+
 }

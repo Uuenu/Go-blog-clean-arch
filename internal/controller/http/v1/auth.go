@@ -27,7 +27,7 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, s usecases.Session
 		cfg:  c,
 	}
 
-	h := handler.Group("/auth", sessionMiddleware(l, s))
+	h := handler.Group("/auth") // sessionMiddleware(l, s)
 	{
 		h.GET("/logout", r.logout) // sessionMiddleware
 		h.POST("/singin", r.signin)

@@ -1,0 +1,6 @@
+time="2022-11-09T19:01:36+03:00" level=info msg="read application configuration" func="go-blog-ca/config.GetConfig.func1()" file="config.go 44"
+time="2022-11-09T19:01:36+03:00" level=info msg="Environment variables:\n  SESSION_TTL int64\n    \t\n  SESSION_COOKIE_KEY string\n    \t\n  SESSION_COOKIE_DOMAIN string\n    \t\n  SESSION_COOKIE_SECURE bool\n    \t\n  SESSION_COOKIE_HTTPONLY bool\n    \t" func="go-blog-ca/config.GetConfig.func1()" file="config.go 48"
+time="2022-11-09T19:01:36+03:00" level=fatal msg="field \"TTL\" is required but the value is not provided" func="go-blog-ca/config.GetConfig.func1()" file="config.go 49"
+time="2022-11-09T19:07:12+03:00" level=info msg="read application configuration" func="go-blog-ca/config.GetConfig.func1()" file="config.go 44"
+time="2022-11-09T19:39:10+03:00" level=info msg="read application configuration" func="go-blog-ca/config.GetConfig.func1()" file="config.go 44"
+time="2022-11-09T20:18:07+03:00" level=error msg="authRoutes - signin - c.ShouldBindJSON. error: invalid character '-' in numeric literal" func="go-blog-ca/internal/controller/http/v1.(*authRoutes).signin()" file="auth.go 75"
