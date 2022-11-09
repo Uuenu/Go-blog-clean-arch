@@ -1,6 +1,6 @@
 package app
 
-import "go-blog-ca/internal/config"
+import "go-blog-ca/config"
 
 func Run(cfg *config.Config) {
 

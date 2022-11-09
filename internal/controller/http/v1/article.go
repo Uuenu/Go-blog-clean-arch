@@ -13,7 +13,6 @@ import (
 type articleRoutes struct {
 	artcl usecases.Article
 	s     usecases.Session
-	
 	l     logging.Logger
 }
 
@@ -31,9 +30,9 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 }
 
 func (r *articleRoutes) GetByID(c *gin.Context) {
-	aid := c.Param("id")
+	articleID := c.Param("id")
 
-	acc, err := r.artcl.GetByID(c.Request.Context(), aid)
+	acc, err := r.artcl.GetByID(c.Request.Context(), articleID)
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - article - get: %w", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -53,8 +52,8 @@ type doCreateRequest struct {
 func (r *articleRoutes) Create(c *gin.Context) {
 	var request doCreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		// TODO logger and error response
-
+		r.l.Error(fmt.Errorf("articleRoutes - Create - ShouldBindJSON. error: %v", err))
+		c.AbortWithStatus(http.StatusBadRequest) // TODO check status
 		return
 	}
 
@@ -68,12 +67,12 @@ func (r *articleRoutes) Create(c *gin.Context) {
 	)
 
 	if err != nil {
-		// TODO logger and error response
-
+		r.l.Error(fmt.Errorf("aritcleRoutes - Create - r.artcl.Create. error: %v", err))
+		c.AbortWithStatus(http.StatusBadRequest) // TODO check status
 		return
 	}
 
-	c.JSON(http.StatusOK, article)
+	c.JSON(http.StatusCreated, article) // TODO check status
 
 }
 
@@ -81,7 +80,8 @@ func (r *articleRoutes) GetAll(c *gin.Context) {
 	arcles, err := r.artcl.GetAll(c.Request.Context())
 
 	if err != nil {
-		// TODO logger and error respose
+		r.l.Error(fmt.Errorf("articleRoutes - GetAll - r.artcl.GetAll. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -94,21 +94,51 @@ func (r *articleRoutes) Update(c *gin.Context) {
 
 type doDeleteRequest struct {
 	//AuthorID  string `json:"article_id"` // aid from article == aid from session
-	ArticleID string `json:"id"`
-	SessionID string `json:"session_id"`
+	ArticleID string `json:"articleID"`
+	SessionID string `json:"sid"`
+	AuthorID  string `json:"aid"`
 }
 
 func (r *articleRoutes) Delete(c *gin.Context) {
 	var request doDeleteRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		// TODO logger and error response
+		r.l.Error(fmt.Errorf("articleRoutes - Delete - ShouldBindJSON. error: %v", err))
+		c.AbortWithStatus(http.StatusBadRequest) // TODO check status
 		return
 	}
 
-	// article, err := r.artcl.GetByID(c.Request.Context(), request.ArticleID)
-	// if err != nil {
-	// 	//TODO error
-	// 	return
-	// }
+	aid, err := authorID(c)
+	if err != nil {
+		r.l.Error(fmt.Errorf("articleRoutes - Delete - authorID. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 
+	article, err := r.artcl.GetByID(c.Request.Context(), request.ArticleID)
+	if err != nil {
+		r.l.Error(fmt.Errorf("articleRoutes - Delete - r.artcl.GetByID. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError) // TODO check status
+		return
+	}
+
+	session, err := r.s.GetByID(c.Request.Context(), request.SessionID)
+	if err != nil {
+		r.l.Error(fmt.Errorf("articleRoutes - Delete - r.s.GetByID. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError) // TODO check status
+		return
+	}
+
+	if session.AuthorID != article.AuthorID {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	if err := r.artcl.Delete(c.Request.Context(), request.ArticleID, aid); err != nil {
+		r.l.Error(fmt.Errorf("articleRoutes - Delete - r.artcl.Delete. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError) // TODO check status
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
 }

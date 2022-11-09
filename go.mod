@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/ilyakaznacheev/cleanenv v1.4.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

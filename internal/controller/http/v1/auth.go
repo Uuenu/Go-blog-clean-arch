@@ -3,7 +3,7 @@ package v1
 import (
 	"errors"
 	"fmt"
-	"go-blog-ca/internal/config"
+	"go-blog-ca/config"
 	"go-blog-ca/internal/usecases"
 	"go-blog-ca/pkg/apperrors"
 	"go-blog-ca/pkg/logging"
@@ -18,29 +18,32 @@ type authRoutes struct {
 	cfg  *config.Config
 }
 
-func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, l logging.Logger) {
+func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, l logging.Logger, c *config.Config) {
 	r := authRoutes{
 		auth: a,
 		l:    l,
+		cfg:  c,
 	}
 
 	h := handler.Group("/auth")
 	{
-		//logout
 		h.GET("/logout", r.logout) // sessionMiddleware
-
 		h.POST("/singin", r.signin)
-		h.POST("/signup")
 	}
 
 }
 
 func (r *authRoutes) logout(c *gin.Context) {
-	//get sid
-	sid := c.GetString("sid")
-	err := r.auth.Logout(c.Request.Context(), sid)
+
+	sid, err := sessionID(c)
 	if err != nil {
-		r.l.Error(fmt.Errorf("authRoutes - logout - r.auth.Logout. error: %v", err))
+		r.l.Error(fmt.Errorf("authRoutes - logout - sessionID. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+
+	err2 := r.auth.Logout(c.Request.Context(), sid)
+	if err2 != nil {
+		r.l.Error(fmt.Errorf("authRoutes - logout - r.auth.Logout. error: %v", err2))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}

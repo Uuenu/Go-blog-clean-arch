@@ -1,8 +1,8 @@
 package main
 
 import (
+	"go-blog-ca/config"
 	"go-blog-ca/internal/app"
-	"go-blog-ca/internal/config"
 	"log"
 
 	"github.com/ilyakaznacheev/cleanenv"
