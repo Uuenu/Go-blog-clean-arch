@@ -20,7 +20,7 @@ type sessionRoutes struct {
 func newSessionRoutes(handler *gin.RouterGroup, s usecases.Session, a usecases.Author, l logging.Logger, c *config.Config) {
 	r := sessionRoutes{s, a, l, c}
 
-	h := handler.Group("/session") // sessionMiddleware()
+	h := handler.Group("/session", sessionMiddleware(l, s)) // sessionMiddleware()
 	{
 
 		h.GET("/", r.SessionByID)

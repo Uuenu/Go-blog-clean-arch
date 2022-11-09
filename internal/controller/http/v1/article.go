@@ -22,10 +22,15 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 	h := handler.Group("/article")
 	{
 		h.GET("/:id", r.GetByID) // get by id
-		h.POST("")               // create
-		h.GET("")                //get all
-		h.PUT("/:id")            // update article
-		h.DELETE("/:id")         //delete by id
+		h.GET("", r.GetAll)      //get all
+
+		authorized := handler.Group("", sessionMiddleware(l, s))
+		{
+			authorized.POST("", r.Create)       // create
+			authorized.PUT("/:id", r.Update)    //update article
+			authorized.DELETE("/:id", r.Delete) //delete by id
+		}
+
 	}
 }
 

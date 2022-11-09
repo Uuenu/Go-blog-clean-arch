@@ -11,18 +11,20 @@ import (
 
 type authorRoutes struct {
 	auth usecases.Author
+	s    usecases.Session
 	l    logging.Logger
 }
 
-func newAuthorRoutes(handler *gin.RouterGroup, auth usecases.Author, l logging.Logger) {
+func newAuthorRoutes(handler *gin.RouterGroup, auth usecases.Author, s usecases.Session, l logging.Logger) {
 	r := &authorRoutes{
 		auth: auth,
+		s:    s,
 		l:    l,
 	}
 
 	h := handler.Group("/author")
 	{
-		authenticated := h.Group("/") // add sessionMiddleware()
+		authenticated := h.Group("/", sessionMiddleware(l, s)) // add sessionMiddleware()
 		{
 			authenticated.PUT("/:id")
 			authenticated.DELETE("/:id")

@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"go-blog-ca/internal/config"
+	"go-blog-ca/config"
 	"go-blog-ca/internal/usecases"
 	"go-blog-ca/pkg/logging"
 
@@ -19,8 +19,8 @@ func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
 	h := handler.Group("/v1")
 	{
 		newArticleRoutes(h, artcl, session, l)
-		newAuthorRoutes(h, author, l)
+		newAuthorRoutes(h, author, session, l)
 		newSessionRoutes(h, session, author, l, c)
-		newAuthRoutes(h, auth, l, c)
+		newAuthRoutes(h, auth, session, l, c)
 	}
 }

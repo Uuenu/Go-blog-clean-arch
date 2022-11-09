@@ -14,18 +14,20 @@ import (
 
 type authRoutes struct {
 	auth usecases.Auth
+	s    usecases.Session
 	l    logging.Logger
 	cfg  *config.Config
 }
 
-func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, l logging.Logger, c *config.Config) {
+func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, s usecases.Session, l logging.Logger, c *config.Config) {
 	r := authRoutes{
 		auth: a,
+		s:    s,
 		l:    l,
 		cfg:  c,
 	}
 
-	h := handler.Group("/auth")
+	h := handler.Group("/auth", sessionMiddleware(l, s))
 	{
 		h.GET("/logout", r.logout) // sessionMiddleware
 		h.POST("/singin", r.signin)

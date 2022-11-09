@@ -3,7 +3,7 @@ package usecases
 import (
 	"context"
 	"fmt"
-	"go-blog-ca/internal/config"
+	"go-blog-ca/config"
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
 )
