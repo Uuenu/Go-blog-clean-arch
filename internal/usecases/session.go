@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"fmt"
+	"go-blog-ca/internal/config"
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
 )
@@ -10,6 +11,7 @@ import (
 type SessionUseCase struct {
 	repo   SessionRepo
 	author Author
+	cfg    *config.Config
 }
 
 func NewSessionUseCase(r SessionRepo, a Author) *SessionUseCase {
@@ -20,7 +22,7 @@ func NewSessionUseCase(r SessionRepo, a Author) *SessionUseCase {
 }
 
 func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Session, error) {
-	sess, err := entity.NewSession(aid)
+	sess, err := entity.NewSession(aid, "", uc.cfg.Session.TTL)
 	if err != nil {
 		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - entity.NewSession: %w", err)
 	}

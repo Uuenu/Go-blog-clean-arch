@@ -3,6 +3,7 @@ package config
 import (
 	"go-blog-ca/pkg/logging"
 	"sync"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -14,6 +15,7 @@ type Config struct {
 		BindIP string `yaml:"bind_ip"`
 		Port   string `yaml:"port"`
 	} `yaml:"listen"`
+
 	Mongodb struct {
 		Host       string `yaml:"host"`
 		Port       string `yaml:"port"`
@@ -23,6 +25,14 @@ type Config struct {
 		Password   string `yaml:"password"`
 		Collection string `yaml:"collection"`
 	} `yaml:"mongodb"`
+
+	Session struct {
+		TTL            time.Duration `env-required:"true" yaml:"ttl" env:"SESSION_TTL"`
+		CookieKey      string        `env-required:"true" yaml:"cookie_key" env:"SESSION_COOKIE_KEY"`
+		CookieDomain   string        `yaml:"cookie_domain" env:"SESSION_COOKIE_DOMAIN"`
+		CookieSecure   bool          `yaml:"cookie_secure" env:"SESSION_COOKIE_SECURE"`
+		CookieHTTPOnly bool          `yaml:"cookie_httponly" env:"SESSION_COOKIE_HTTPONLY"`
+	} `yaml:"session"`
 }
 
 var instance *Config

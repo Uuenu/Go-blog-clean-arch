@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const apiPath = "/v1"
+
 func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
 	artcl usecases.Article, auth usecases.Auth, session usecases.Session) {
 
