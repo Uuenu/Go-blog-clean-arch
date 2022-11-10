@@ -9,6 +9,7 @@ import (
 
 const (
 	saltSize = 32
+	chars    = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 func GenerateRandomSalt(saltSize int) ([]byte, error) {
@@ -46,4 +47,23 @@ func PasswordHash(password string, salt []byte) (string, error) {
 
 	return hashedPasswordHex, nil
 
+}
+
+func GenerateId() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
+}
+
+func UniqueString(size int) (string, error) {
+	bytes := make([]byte, size)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+
+	for i, b := range bytes {
+		bytes[i] = chars[b%byte(len(chars))]
+	}
+
+	return string(bytes), nil
 }

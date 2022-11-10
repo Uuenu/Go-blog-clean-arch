@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go-blog-ca/pkg/apperrors"
+	"go-blog-ca/pkg/utils"
 )
 
 type Session struct {
@@ -16,10 +17,10 @@ type Session struct {
 }
 
 func NewSession(aid, ip string, ttl time.Duration) (Session, error) {
-	id, err := "", fmt.Errorf("implement me") //utils.UniqueString(32)
-
+	//id := utils.GenerateId() // replace on unique string
+	id, err := utils.UniqueString(32)
 	if err != nil {
-		return Session{}, fmt.Errorf("utils.UniqueString: %w", apperrors.ErrSessionNotCreated)
+		return Session{}, fmt.Errorf("Session - NewSession() - utils.UniqueString(). error: %v", apperrors.ErrSessionNotCreated)
 	}
 
 	now := time.Now()
