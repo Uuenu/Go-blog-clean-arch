@@ -90,7 +90,6 @@ func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error
 
 func (r AuthorPostgresRepo) FindByID(ctx context.Context, aid string) (entity.Author, error) {
 	sql, args, err := r.Builder.Select("id, username, email, password_hash, salt").
-		From("author").
 		From(_athTable).
 		Where(squirrel.Eq{"id": aid}).
 		ToSql()
@@ -122,7 +121,6 @@ func (r AuthorPostgresRepo) FindByID(ctx context.Context, aid string) (entity.Au
 
 func (r AuthorPostgresRepo) FindByEmail(ctx context.Context, email string) (entity.Author, error) {
 	sql, args, err := r.Builder.Select("id, username, email, password_hash, salt").
-		From("author").
 		From(_athTable).
 		Where(squirrel.Eq{"email": email}).
 		ToSql()
@@ -150,4 +148,27 @@ func (r AuthorPostgresRepo) FindByEmail(ctx context.Context, email string) (enti
 	}
 
 	return author, nil
+}
+
+func (r AuthorPostgresRepo) Delete(ctx context.Context, id string) error {
+	sql, args, err := r.Builder.
+		Delete().
+		From(_athTable).
+		Where(squirrel.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		return fmt.Errorf("AuthorRepo - Delete - r.Builder.Delete. error: %v", err)
+	}
+
+	ct, err := r.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return fmt.Errorf("AuthorRepo - Delete - r.Pool.Exec. error: %v", err)
+	}
+
+	if !ct.Delete() {
+		return fmt.Errorf("AuthorRepo - Delete - r.Pool.Exec. error: %v", apperrors.ErrAuthorNotFound)
+	}
+
+	return nil
 }

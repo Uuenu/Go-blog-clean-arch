@@ -14,9 +14,10 @@ import (
 
 type (
 	Config struct {
-		Listen  `yaml:"listen"`
-		Mongodb `yaml:"mongodb"`
-		Session `yaml:"session"`
+		Listen   `yaml:"listen"`
+		Mongodb  `yaml:"mongodb"`
+		Session  `yaml:"session"`
+		Postgres `yaml:"postgresql"`
 	}
 
 	Listen struct {
@@ -41,6 +42,14 @@ type (
 		CookieDomain   string        `yaml:"cookie_domain"`
 		CookieSecure   bool          `yaml:"cookie_secure"`
 		CookieHTTPOnly bool          `yaml:"cookie_httponly"`
+	}
+
+	Postgres struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		Database string `yaml:"database"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
 	}
 )
 

@@ -8,6 +8,7 @@ import (
 	"go-blog-ca/internal/usecases/repo"
 	"go-blog-ca/pkg/client/mongodb"
 	logger "go-blog-ca/pkg/logging"
+	"go-blog-ca/pkg/postgres"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,10 +28,21 @@ func Run(cfg *config.Config) {
 	}
 	mdb := mongodbClient.Database(cfg.Mongodb.Database)
 
+	//Postgresql
+	postgres, err := postgres.New()
+	if err != nil {
+		l.Errorf("app - Run - postgres.New. error: %v", err)
+	}
+
 	//Use case
+
+	// Repo based on Mongodb
 	sessionRepo := repo.NewSessionRepo(mdb)
-	authorRepo := repo.NewAuthorRepo(mdb)
+	//authorRepo := repo.NewAuthorRepo(mdb)
 	articleRepo := repo.NewArticleRepo(mdb)
+
+	// Repo based on Postgres
+	authorRepo := repo.New(postgres)
 
 	sessionUseCase := usecases.NewSessionUseCase(sessionRepo)
 	authorUseCase := usecases.NewAuthorUseCase(authorRepo, sessionUseCase)

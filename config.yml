@@ -19,4 +19,11 @@ session:
   cookie_domain: ""
   cookie_secure: false
   cookie_httponly: true
+postgresql:
+  host: localhost
+  port: 5432
+  database: go-blog-ca
+  username: postgres
+  password: qwerty
+
 
