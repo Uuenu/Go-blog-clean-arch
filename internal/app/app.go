@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"go-blog-ca/config"
 	v1 "go-blog-ca/internal/controller/http/v1"
 	"go-blog-ca/internal/usecases"
@@ -29,7 +30,9 @@ func Run(cfg *config.Config) {
 	mdb := mongodbClient.Database(cfg.Mongodb.Database)
 
 	//Postgresql
-	postgres, err := postgres.New()
+	p := cfg.Postgres
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", p.Username, p.Password, p.Host, p.Port, p.Database)
+	postgres, err := postgres.New(dsn)
 	if err != nil {
 		l.Errorf("app - Run - postgres.New. error: %v", err)
 	}
@@ -53,6 +56,6 @@ func Run(cfg *config.Config) {
 	handler := gin.New()
 	v1.NewRouter(handler, l, authorUseCase, articleUseCase, authUseCase, sessionUseCase, cfg)
 
-	handler.Run()
+	handler.Run(":3000")
 
 }

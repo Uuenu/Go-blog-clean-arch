@@ -152,7 +152,7 @@ func (r AuthorPostgresRepo) FindByEmail(ctx context.Context, email string) (enti
 
 func (r AuthorPostgresRepo) Delete(ctx context.Context, id string) error {
 	sql, args, err := r.Builder.
-		Delete().
+		Delete("").
 		From(_athTable).
 		Where(squirrel.Eq{"id": id}).
 		ToSql()
