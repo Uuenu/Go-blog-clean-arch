@@ -53,7 +53,7 @@ func Run(cfg *config.Config) {
 	articleUseCase := usecases.NewArticleUseCase(articleRepo, authorUseCase, sessionUseCase)
 
 	//HTTP Server
-	handler := gin.New()
+	handler := gin.Default()
 	v1.NewRouter(handler, l, authorUseCase, articleUseCase, authUseCase, sessionUseCase, cfg)
 
 	handler.Run(":3000")
