@@ -31,7 +31,7 @@ func (r AuthorPostgresRepo) Create(ctx context.Context, author entity.Author) (s
 	sql, args, err := r.Builder.
 		Insert(_athTable).
 		Columns("username, email, password_hash, salt").
-		Values(author.Username, author.Email, author.PasswordHash, author.Salt).
+		Values(author.Username, author.Email, author.PasswordHash, "").
 		Suffix("RETURNING id").
 		ToSql()
 

@@ -46,16 +46,14 @@ type doSignupRequest struct {
 
 func (r *authorRoutes) Singup(c *gin.Context) {
 
-	r.l.Infof(c.Param("username"), c.Param("email"), c.Param("password"))
-	r.l.Infof("Params: %s", c.Params)
-	r.l.Infoln("msg", c.Query("email"))
-
 	var signup doSignupRequest
 	if err := c.ShouldBindJSON(&signup); err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - ath - c.ShouldBindJSON: %v", err))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, nil)
 		return
 	}
+
+	r.l.Infoln(signup)
 
 	newAth := entity.Author{
 		ID:           "",
@@ -65,6 +63,8 @@ func (r *authorRoutes) Singup(c *gin.Context) {
 		PasswordHash: "",
 		Salt:         []byte{},
 	}
+
+	r.l.Infoln(newAth)
 
 	if err := newAth.GeneratePasswordHash(); err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - author - GeneratePasswordHash: %v", err))
