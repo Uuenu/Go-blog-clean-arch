@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v4"
+	//"github.com/google/uuid"
 )
 
 const (
@@ -31,7 +32,7 @@ func (r AuthorPostgresRepo) Create(ctx context.Context, author entity.Author) (s
 	sql, args, err := r.Builder.
 		Insert(_athTable).
 		Columns("username, email, password_hash, salt").
-		Values(author.Username, author.Email, author.PasswordHash, "").
+		Values(author.Username, author.Email, author.PasswordHash, author.Salt).
 		Suffix("RETURNING id").
 		ToSql()
 
@@ -59,14 +60,14 @@ func (r AuthorPostgresRepo) Create(ctx context.Context, author entity.Author) (s
 
 func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error) {
 	sql, _, err := r.Builder.
-		Select("id, username, email, password_hash, salt").
+		Select("id, username, email").
 		From(_athTable).
 		ToSql()
 	if err != nil {
 		return nil, fmt.Errorf("AuthorRepo - GetAll - r.Builder. error: %v", err)
 	}
 
-	rows, err := r.Pool.Query(ctx, sql)
+	rows, err := r.Pool.Query(ctx, sql, nil...)
 	if err != nil {
 		return nil, fmt.Errorf("AuthorRepo - GetAll - r.Pool.Query, error: %v", err)
 	}
@@ -77,7 +78,7 @@ func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error
 	for rows.Next() {
 		ath := entity.Author{}
 
-		err := rows.Scan(ath.ID, ath.Username, ath.Email, ath.PasswordHash, ath.Salt)
+		err := rows.Scan(ath.ID, ath.Username, ath.Email)
 		if err != nil {
 			return nil, fmt.Errorf("AuthorRepo - GetAll - rows.Scan. error: %v", err)
 		}
@@ -89,6 +90,10 @@ func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error
 }
 
 func (r AuthorPostgresRepo) FindByID(ctx context.Context, aid string) (entity.Author, error) {
+
+	//oid, _ := primitive.ObjectIDFromHex(aid)
+	//uaid, _ := uuid.FromString(aid)
+
 	sql, args, err := r.Builder.Select("id, username, email, password_hash, salt").
 		From(_athTable).
 		Where(squirrel.Eq{"id": aid}).
@@ -98,11 +103,10 @@ func (r AuthorPostgresRepo) FindByID(ctx context.Context, aid string) (entity.Au
 		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - r.Builder.Select. error: %v", err)
 	}
 
-	author := entity.Author{
-		ID: aid,
-	}
+	author := entity.Author{}
 
-	err = r.Pool.QueryRow(ctx, sql, args).Scan(
+	err = r.Pool.QueryRow(ctx, sql, args...).Scan(
+		&author.ID,
 		&author.Username,
 		&author.Email,
 		&author.PasswordHash,
@@ -129,13 +133,12 @@ func (r AuthorPostgresRepo) FindByEmail(ctx context.Context, email string) (enti
 		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - r.Builder.Select. error: %v", err)
 	}
 
-	author := entity.Author{
-		Email: email,
-	}
+	author := entity.Author{}
 
-	err = r.Pool.QueryRow(ctx, sql, args).Scan(
+	err = r.Pool.QueryRow(ctx, sql, args...).Scan(
 		&author.ID,
 		&author.Username,
+		&author.Email,
 		&author.PasswordHash,
 		&author.Salt,
 	)

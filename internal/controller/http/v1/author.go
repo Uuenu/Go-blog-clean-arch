@@ -30,9 +30,10 @@ func newAuthorRoutes(handler *gin.RouterGroup, ath usecases.Author, s usecases.S
 			authenticated.DELETE("/:id")
 
 		}
+		h.GET("/email", r.AuthorByEmail)
 		h.POST("/signup", r.Singup)
-		h.GET("/:id", r.ArticleByID) // get by id
-		h.GET("")                    //get all
+		h.GET("/:id", r.AuthorByID) // get by id
+		h.GET("", r.Authors)        //get all
 
 	}
 
@@ -85,7 +86,13 @@ func (r *authorRoutes) Singup(c *gin.Context) {
 
 }
 
-func (r *authorRoutes) ArticleByID(c *gin.Context) {
+type doResponseAuthor struct {
+	ID       string `bson:"id,omitempty"`
+	Username string `bson:"username,omitempty"`
+	Email    string `bson:"email,omitempty"`
+}
+
+func (r *authorRoutes) AuthorByID(c *gin.Context) {
 	aid := c.Param("id")
 
 	acc, err := r.ath.GetByID(c.Request.Context(), aid)
@@ -94,7 +101,49 @@ func (r *authorRoutes) ArticleByID(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	response := doResponseAuthor{
+		ID:       acc.ID,
+		Username: acc.Username,
+		Email:    acc.Email,
+	}
 
-	c.JSON(http.StatusOK, acc)
+	c.JSON(http.StatusOK, response)
 
+}
+
+func (r *authorRoutes) AuthorByEmail(c *gin.Context) {
+	email := "codyvangoth@gmail.com"
+
+	author, err := r.ath.GetByEmail(c.Request.Context(), email)
+	if err != nil {
+		r.l.Error(fmt.Errorf("http - v1 - ath - get by email: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	response := doResponseAuthor{
+		ID:       author.ID,
+		Username: author.Username,
+		Email:    author.Email,
+	}
+	c.JSON(http.StatusOK, response)
+}
+
+func (r *authorRoutes) Authors(c *gin.Context) {
+	authors, err := r.ath.GetAll(c.Request.Context())
+	if err != nil {
+		r.l.Error(fmt.Errorf("http - v1 - ath - get: %w", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	var response []doResponseAuthor
+	for _, ath := range authors {
+		response = append(response, doResponseAuthor{
+			ID:       ath.ID,
+			Username: ath.Username,
+			Email:    ath.Email,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }
