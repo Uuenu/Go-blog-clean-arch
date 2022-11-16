@@ -13,8 +13,9 @@ type SessionUseCase struct {
 	cfg  *config.Config
 }
 
-func NewSessionUseCase(r SessionRepo) *SessionUseCase {
+func NewSessionUseCase(r SessionRepo, cfg *config.Config) *SessionUseCase {
 	return &SessionUseCase{
+		cfg:  cfg,
 		repo: r,
 	}
 }

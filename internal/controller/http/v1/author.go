@@ -147,3 +147,12 @@ func (r *authorRoutes) Authors(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (r *authorRoutes) Archive(c *gin.Context, aid string) {
+	if err := r.ath.Delete(c.Request.Context(), aid, ""); err != nil {
+		r.l.Error(fmt.Errorf("http - v1 - ath - get: %w", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}

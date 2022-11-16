@@ -78,7 +78,7 @@ func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error
 	for rows.Next() {
 		ath := entity.Author{}
 
-		err := rows.Scan(ath.ID, ath.Username, ath.Email)
+		err := rows.Scan(&ath.ID, &ath.Username, &ath.Email)
 		if err != nil {
 			return nil, fmt.Errorf("AuthorRepo - GetAll - rows.Scan. error: %v", err)
 		}
@@ -90,9 +90,6 @@ func (r AuthorPostgresRepo) FindAll(ctx context.Context) ([]entity.Author, error
 }
 
 func (r AuthorPostgresRepo) FindByID(ctx context.Context, aid string) (entity.Author, error) {
-
-	//oid, _ := primitive.ObjectIDFromHex(aid)
-	//uaid, _ := uuid.FromString(aid)
 
 	sql, args, err := r.Builder.Select("id, username, email, password_hash, salt").
 		From(_athTable).

@@ -29,7 +29,7 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, s usecases.Session
 
 	h := handler.Group("/auth") // sessionMiddleware(l, s)
 	{
-		h.GET("/logout", r.logout) // sessionMiddleware
+		h.GET("/logout", r.logout, sessionMiddleware(l, s)) // sessionMiddleware
 		h.POST("/singin", r.signin)
 	}
 
@@ -70,6 +70,7 @@ type doLoginRequest struct {
 }
 
 func (r *authRoutes) signin(c *gin.Context) {
+	r.l.Infoln("We are here")
 	var logReq doLoginRequest
 	if err := c.ShouldBindJSON(&logReq); err != nil {
 		r.l.Error(fmt.Errorf("authRoutes - signin - c.ShouldBindJSON. error: %v", err))
@@ -80,7 +81,7 @@ func (r *authRoutes) signin(c *gin.Context) {
 	sess, err := r.auth.EmailLogin(c.Request.Context(), logReq.Email, logReq.Password)
 	if err != nil {
 		r.l.Error(fmt.Errorf("authRoutes - signin - r.auth.EmailLogin. error: %v", err))
-
+		c.AbortWithStatus(http.StatusInternalServerError)
 		if errors.Is(err, apperrors.ErrAuthorIncorrectPassword) ||
 			errors.Is(err, apperrors.ErrAuthorNotFound) {
 			//abortWithError(c, http.StatusUnauthorized, apperrors.ErrAuthorIncorrectEmailOrPassword)
