@@ -35,8 +35,9 @@ func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Sessio
 
 func (uc *SessionUseCase) GetByID(ctx context.Context, sid string) (entity.Session, error) {
 	sess, err := uc.repo.FindByID(ctx, sid)
+
 	if err != nil {
-		return entity.Session{}, fmt.Errorf("SessionUseCase  - Create - uc.repo.FindByID")
+		return entity.Session{}, fmt.Errorf("SessionUseCase  - GetByID - uc.repo.FindByID")
 	}
 
 	return sess, nil

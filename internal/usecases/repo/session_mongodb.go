@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
+	"go-blog-ca/pkg/logging"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,12 +14,13 @@ import (
 
 type SessionRepo struct {
 	collection *mongo.Collection
-	//l          *logging.Logger
+	log        logging.Logger
 }
 
-func NewSessionRepo(db *mongo.Database) *SessionRepo {
+func NewSessionRepo(db *mongo.Database, l logging.Logger) *SessionRepo {
 	return &SessionRepo{
 		collection: db.Collection("sessions"),
+		log:        l,
 	}
 }
 
@@ -31,20 +33,22 @@ func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
 }
 
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
+	r.log.Infoln("Hello from SessionRepo")
 	var s entity.Session
 	oid, err := primitive.ObjectIDFromHex(sid)
 	if err != nil {
 		return entity.Session{}, fmt.Errorf("primitive.OIDFromHex: %s", sid)
 	}
+	r.log.Infoln("Hello from SessionRepo")
 	if err := r.collection.FindOne(ctx, bson.M{"_id": oid}).Decode(&s); err != nil {
-
+		r.log.Infof("Session from Repo: %s, %s", s.ID, s.AuthorID)
 		if err == mongo.ErrNoDocuments {
 			return entity.Session{}, fmt.Errorf("r.FindOne.Decode: %w", apperrors.ErrSessionNotFound)
 		}
 
 		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - FindOne: %w", err)
 	}
-	//r.l.Infof("Session: %s")
+
 	return s, nil
 }
 func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session, error) {

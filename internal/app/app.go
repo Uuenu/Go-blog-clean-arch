@@ -40,7 +40,7 @@ func Run(cfg *config.Config) {
 	//Use case
 
 	// Repo based on Mongodb
-	sessionRepo := repo.NewSessionRepo(mdb)
+	sessionRepo := repo.NewSessionRepo(mdb, l)
 	//authorRepo := repo.NewAuthorRepo(mdb)
 	articleRepo := repo.NewArticleRepo(mdb)
 
