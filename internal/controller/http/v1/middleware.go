@@ -16,6 +16,7 @@ import (
 func sessionMiddleware(l logging.Logger, s usecases.Session) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		sid, err := ctx.Cookie("id")
+		l.Infof("Session ID: %s", sid)
 		if err != nil {
 			l.Error(fmt.Errorf("http - v1 - middleware sessionMiddleware - c.Cookie. error: %v", err))
 			ctx.AbortWithStatus(http.StatusUnauthorized)
@@ -26,6 +27,7 @@ func sessionMiddleware(l logging.Logger, s usecases.Session) gin.HandlerFunc {
 			l.Error(fmt.Errorf("http - v1 - middleware - sessionMiddleware - s.GetByID. error: %v", err))
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
+		l.Infof("Session: %s", sess)
 
 		ctx.Set("sid", sess.ID)
 		ctx.Set("aid", sess.AuthorID)

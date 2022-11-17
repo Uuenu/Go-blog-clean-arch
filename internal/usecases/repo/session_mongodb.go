@@ -13,7 +13,7 @@ import (
 
 type SessionRepo struct {
 	collection *mongo.Collection
-	//logger
+	//l          *logging.Logger
 }
 
 func NewSessionRepo(db *mongo.Database) *SessionRepo {
@@ -32,8 +32,11 @@ func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
 
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
 	var s entity.Session
-
-	if err := r.collection.FindOne(ctx, bson.M{"_id": sid}).Decode(&s); err != nil {
+	oid, err := primitive.ObjectIDFromHex(sid)
+	if err != nil {
+		return entity.Session{}, fmt.Errorf("primitive.OIDFromHex: %s", sid)
+	}
+	if err := r.collection.FindOne(ctx, bson.M{"_id": oid}).Decode(&s); err != nil {
 
 		if err == mongo.ErrNoDocuments {
 			return entity.Session{}, fmt.Errorf("r.FindOne.Decode: %w", apperrors.ErrSessionNotFound)
@@ -41,7 +44,7 @@ func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session,
 
 		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - FindOne: %w", err)
 	}
-
+	//r.l.Infof("Session: %s")
 	return s, nil
 }
 func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session, error) {

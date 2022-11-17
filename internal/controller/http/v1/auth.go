@@ -42,7 +42,7 @@ func (r *authRoutes) logout(c *gin.Context) {
 		r.l.Error(fmt.Errorf("authRoutes - logout - sessionID. error: %v", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
-
+	r.l.Infof("Session ID: %s", sid)
 	err2 := r.auth.Logout(c.Request.Context(), sid)
 	if err2 != nil {
 		r.l.Error(fmt.Errorf("authRoutes - logout - r.auth.Logout. error: %v", err2))
@@ -88,7 +88,7 @@ func (r *authRoutes) signin(c *gin.Context) {
 			return
 		}
 	}
-
+	r.l.Infof("Sess.id: %v", sess.ID)
 	c.SetCookie(
 		r.cfg.Session.CookieKey,
 		sess.ID,
@@ -98,9 +98,13 @@ func (r *authRoutes) signin(c *gin.Context) {
 		r.cfg.Session.CookieSecure,
 		r.cfg.Session.CookieHTTPOnly,
 	)
-	sid, err := c.Cookie("id")
-	if err != nil {
-		r.l.Error("authRoutes - signin - c.Cookie. error: %v", err)
-	}
+
+	c.Set("sid", sess.ID)
+	sid, _ := c.Get("sid")
+
+	// sid, err := c.Cookie("sid")
+	// if err != nil {
+	// 	r.l.Error("authRoutes - signin - c.Cookie. error: %v", err)
+	// }
 	c.JSON(http.StatusOK, sid)
 }
