@@ -73,7 +73,7 @@ func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
 		return fmt.Errorf("SessionRepo - Delete - Deleteone: %w", err)
 	}
 
-	if dresult.DeletedCount != 0 {
+	if dresult.DeletedCount == 0 {
 		return fmt.Errorf("SessionRepo - Delete - DeleteCount: %d", dresult.DeletedCount)
 	}
 

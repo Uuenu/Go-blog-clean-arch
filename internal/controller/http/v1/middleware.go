@@ -11,6 +11,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// TODO fix session
+
 func sessionMiddleware(l logging.Logger, s usecases.Session) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		sid, err := ctx.Cookie("id")
@@ -43,7 +45,10 @@ func authorID(c *gin.Context) (string, error) {
 }
 
 func sessionID(c *gin.Context) (string, error) {
-	sid := c.GetString("sid")
+	sid, err := c.Cookie("id")
+	if err != nil {
+		return "", apperrors.ErrSessionContextNotFound
+	}
 
 	if sid == "" {
 		return "", apperrors.ErrSessionContextNotFound

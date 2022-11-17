@@ -98,6 +98,9 @@ func (r *authRoutes) signin(c *gin.Context) {
 		r.cfg.Session.CookieSecure,
 		r.cfg.Session.CookieHTTPOnly,
 	)
-
-	c.Status(http.StatusOK)
+	sid, err := c.Cookie("id")
+	if err != nil {
+		r.l.Error("authRoutes - signin - c.Cookie. error: %v", err)
+	}
+	c.JSON(http.StatusOK, sid)
 }
