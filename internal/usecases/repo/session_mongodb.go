@@ -33,24 +33,24 @@ func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
 }
 
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
-	//r.log.Infoln("Hello from SessionRepo")
+	oid, err := primitive.ObjectIDFromHex(sid)
+	if err != nil {
+		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - ObjectIDFromHex: %v", err)
+	}
+
+	filter := bson.M{"_id": oid}
+
+	result := r.collection.FindOne(ctx, filter)
+
 	var s entity.Session
 
-	result := r.collection.FindOne(ctx, bson.M{"_id": sid})
-	r.log.Infof("Result: %v", result)
-	result.Decode(&s)
-
-	if err := r.collection.FindOne(ctx, bson.M{"_id": sid}).Decode(&s); err != nil {
-		r.log.Infof("Session from Repo: %s, %s", s.ID, s.AuthorID)
-		if err == mongo.ErrNoDocuments {
-			return entity.Session{}, fmt.Errorf("r.FindOne.Decode: %w", apperrors.ErrSessionNotFound)
-		}
-
-		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - FindOne: %w", err)
+	if err := result.Decode(&s); err != nil {
+		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - result.Decode: %v", err)
 	}
 
 	return s, nil
 }
+
 func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session, error) {
 
 	filter := bson.M{"account_id": bson.M{"": aid}}
@@ -68,6 +68,7 @@ func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session
 
 	return sessions, nil
 }
+
 func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
 
 	dresult, err := r.collection.DeleteOne(ctx, bson.M{"_id": sid})
