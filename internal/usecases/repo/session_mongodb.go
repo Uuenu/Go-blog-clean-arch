@@ -35,11 +35,11 @@ func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
 	//r.log.Infoln("Hello from SessionRepo")
 	var s entity.Session
-	// oid, err := primitive.ObjectIDFromHex(sid)
-	// if err != nil {
-	// 	return entity.Session{}, fmt.Errorf("primitive.OIDFromHex: %s", sid)
-	// }
-	r.log.Infoln(sid)
+
+	result := r.collection.FindOne(ctx, bson.M{"_id": sid})
+	r.log.Infof("Result: %v", result)
+	result.Decode(&s)
+
 	if err := r.collection.FindOne(ctx, bson.M{"_id": sid}).Decode(&s); err != nil {
 		r.log.Infof("Session from Repo: %s, %s", s.ID, s.AuthorID)
 		if err == mongo.ErrNoDocuments {

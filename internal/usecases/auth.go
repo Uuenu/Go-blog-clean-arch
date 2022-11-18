@@ -5,18 +5,21 @@ import (
 	"fmt"
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
+	"go-blog-ca/pkg/logging"
 	"go-blog-ca/pkg/utils"
 )
 
 type AuthUseCase struct {
 	Author  Author
 	Session Session
+	Logger  logging.Logger
 }
 
-func NewAuthUseCase(a Author, s Session) *AuthUseCase {
+func NewAuthUseCase(a Author, s Session, l logging.Logger) *AuthUseCase {
 	return &AuthUseCase{
 		Author:  a,
 		Session: s,
+		Logger:  l,
 	}
 }
 
@@ -47,6 +50,7 @@ func (uc *AuthUseCase) EmailLogin(ctx context.Context, email, password string) (
 }
 
 func (uc *AuthUseCase) Logout(ctx context.Context, sid string) error {
+	uc.Logger.Infof("SessionID: %s", sid)
 	if err := uc.Session.Terminate(ctx, sid, ""); err != nil {
 		return fmt.Errorf("AuthUseCase - Logout - uc.Session.Terminate: %w", err)
 	}

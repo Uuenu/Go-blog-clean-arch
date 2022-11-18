@@ -6,17 +6,20 @@ import (
 	"go-blog-ca/config"
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
+	"go-blog-ca/pkg/logging"
 )
 
 type SessionUseCase struct {
-	repo SessionRepo
-	cfg  *config.Config
+	repo   SessionRepo
+	cfg    *config.Config
+	logger logging.Logger
 }
 
-func NewSessionUseCase(r SessionRepo, cfg *config.Config) *SessionUseCase {
+func NewSessionUseCase(r SessionRepo, cfg *config.Config, l logging.Logger) *SessionUseCase {
 	return &SessionUseCase{
-		cfg:  cfg,
-		repo: r,
+		cfg:    cfg,
+		repo:   r,
+		logger: l,
 	}
 }
 
@@ -34,6 +37,7 @@ func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Sessio
 }
 
 func (uc *SessionUseCase) GetByID(ctx context.Context, sid string) (entity.Session, error) {
+
 	sess, err := uc.repo.FindByID(ctx, sid)
 
 	if err != nil {

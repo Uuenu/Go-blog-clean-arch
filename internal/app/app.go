@@ -47,9 +47,9 @@ func Run(cfg *config.Config) {
 	// Repo based on Postgres
 	authorRepo := repo.New(postgres)
 
-	sessionUseCase := usecases.NewSessionUseCase(sessionRepo, cfg)
+	sessionUseCase := usecases.NewSessionUseCase(sessionRepo, cfg, l)
 	authorUseCase := usecases.NewAuthorUseCase(authorRepo, sessionUseCase)
-	authUseCase := usecases.NewAuthUseCase(authorUseCase, sessionUseCase)
+	authUseCase := usecases.NewAuthUseCase(authorUseCase, sessionUseCase, l)
 	articleUseCase := usecases.NewArticleUseCase(articleRepo, authorUseCase, sessionUseCase)
 
 	//HTTP Server
