@@ -33,6 +33,8 @@ func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
 }
 
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
+	//TODO: UniqueString isnt OBjectID
+
 	oid, err := primitive.ObjectIDFromHex(sid)
 	if err != nil {
 		return entity.Session{}, fmt.Errorf("SessionRepo - FindByID - ObjectIDFromHex: %v", err)
