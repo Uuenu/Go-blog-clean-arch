@@ -26,6 +26,7 @@ func NewSession(aid, ip string, ttl time.Duration) (Session, error) {
 	now := time.Now()
 
 	return Session{
+		//TODO fix ID GeneratedID != ObjectID
 		ID:       id,
 		AuthorID: aid,
 		IP:       ip,
