@@ -15,6 +15,7 @@ import (
 
 func sessionMiddleware(l logging.Logger, s usecases.Session) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		l.Infof("Hello from SessionMiddleware !!!")
 		sid, err := ctx.Cookie("id")
 		l.Infof("SessionID From Middleware: %s", sid)
 		if err != nil {

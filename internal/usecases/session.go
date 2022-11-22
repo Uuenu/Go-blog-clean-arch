@@ -29,9 +29,13 @@ func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Sessio
 		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - entity.NewSession: %w", err)
 	}
 
-	if err := uc.repo.Create(ctx, sess); err != nil {
+	sid, err := uc.repo.Create(ctx, sess)
+
+	if err != nil {
 		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - uc.repo.Create: %w", err)
 	}
+
+	sess.ID = sid
 
 	return sess, nil
 }

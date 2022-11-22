@@ -77,7 +77,7 @@ type (
 
 	// SessionRepo interface
 	SessionRepo interface {
-		Create(ctx context.Context, s entity.Session) error
+		Create(ctx context.Context, s entity.Session) (string, error)
 
 		FindByID(ctx context.Context, sid string) (entity.Session, error)
 

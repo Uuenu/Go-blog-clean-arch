@@ -24,12 +24,16 @@ func NewSessionRepo(db *mongo.Database, l logging.Logger) *SessionRepo {
 	}
 }
 
-func (r *SessionRepo) Create(ctx context.Context, s entity.Session) error {
-	_, err := r.collection.InsertOne(ctx, s)
+func (r *SessionRepo) Create(ctx context.Context, s entity.Session) (string, error) {
+	result, err := r.collection.InsertOne(ctx, s)
 	if err != nil {
-		return fmt.Errorf("SessionRepo - Create - r.collection.InsertOne: %w", err)
+		return "", fmt.Errorf("SessionRepo - Create - r.collection.InsertOne: %w", err)
 	}
-	return nil
+	session_id := primitive.ObjectID.Hex(result.InsertedID.(primitive.ObjectID))
+
+	r.log.Infof("ObjectID: %v", result.InsertedID)
+	r.log.Infof("SessionID: %v", session_id)
+	return session_id, nil
 }
 
 func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session, error) {
@@ -42,7 +46,11 @@ func (r *SessionRepo) FindByID(ctx context.Context, sid string) (entity.Session,
 
 	filter := bson.M{"_id": oid}
 
+	r.log.Infof("SessionRepo FindByID. oid: %v, sid: %v", oid, sid)
+
 	result := r.collection.FindOne(ctx, filter)
+
+	r.log.Infof("Mongo result: %v", result)
 
 	var s entity.Session
 
@@ -72,8 +80,14 @@ func (r *SessionRepo) FindAll(ctx context.Context, aid string) ([]entity.Session
 }
 
 func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
+	r.log.Infof("SessionID from SessionRepo(Delete): %v", sid)
 
-	dresult, err := r.collection.DeleteOne(ctx, bson.M{"_id": sid})
+	oid, err := primitive.ObjectIDFromHex(sid)
+	if err != nil {
+		return fmt.Errorf("SessionRepo - Delete - ObjectIDFromHex: %v", err)
+	}
+
+	dresult, err := r.collection.DeleteOne(ctx, bson.M{"_id": oid})
 	if err != nil {
 
 		if err == mongo.ErrNoDocuments {

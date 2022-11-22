@@ -44,6 +44,7 @@ func (uc *AuthUseCase) EmailLogin(ctx context.Context, email, password string) (
 	if err != nil {
 		return entity.Session{}, fmt.Errorf("AuthUseCase - EmailLogin - uc.Session.Create: %w", err)
 	}
+	uc.Logger.Infof("Session  From AuthUseCase: %v", sess.AuthorID)
 
 	return sess, nil
 
