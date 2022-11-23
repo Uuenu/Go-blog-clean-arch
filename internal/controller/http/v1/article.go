@@ -22,11 +22,11 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 	h := handler.Group("/article")
 	{
 		h.GET("/:id", r.GetByID) // get by id
-		h.GET("", r.GetAll)      //get all
+		h.GET("")                //get all
 
 		authorized := handler.Group("", sessionMiddleware(l, s))
 		{
-			authorized.POST("", r.Create)       // create
+			authorized.POST("", r.create)       // create
 			authorized.PUT("/:id", r.Update)    //update article
 			authorized.DELETE("/:id", r.Delete) //delete by id
 		}
@@ -54,13 +54,21 @@ type doCreateRequest struct {
 	Text     string `json:"text" binding:"required"`
 }
 
-func (r *articleRoutes) Create(c *gin.Context) {
+func (r *articleRoutes) create(c *gin.Context) {
 	var request doCreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		r.l.Error(fmt.Errorf("articleRoutes - Create - ShouldBindJSON. error: %v", err))
 		c.AbortWithStatus(http.StatusBadRequest) // TODO check status
 		return
 	}
+
+	aid, err := authorID(c)
+	if err != nil {
+		r.l.Error(fmt.Errorf("articleRoutes - create - sessionID. error: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+
+	request.AuthorID = aid
 
 	article, err := r.artcl.Create(
 		c.Request.Context(),

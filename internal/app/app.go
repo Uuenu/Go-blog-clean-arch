@@ -42,10 +42,11 @@ func Run(cfg *config.Config) {
 	// Repo based on Mongodb
 	sessionRepo := repo.NewSessionRepo(mdb, l)
 	//authorRepo := repo.NewAuthorRepo(mdb)
-	articleRepo := repo.NewArticleRepo(mdb)
+	//articleRepo := repo.NewArticleRepo(mdb)
 
 	// Repo based on Postgres
 	authorRepo := repo.New(postgres)
+	articleRepo := repo.NewArticlePostgresRepo(postgres)
 
 	sessionUseCase := usecases.NewSessionUseCase(sessionRepo, cfg, l)
 	authorUseCase := usecases.NewAuthorUseCase(authorRepo, sessionUseCase)

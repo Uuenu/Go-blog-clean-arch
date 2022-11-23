@@ -11,23 +11,25 @@ import (
 )
 
 type authorRoutes struct {
-	ath usecases.Author
-	s   usecases.Session
-	l   logging.Logger
+	ath  usecases.Author
+	auth usecases.Auth
+	s    usecases.Session
+	l    logging.Logger
 }
 
-func newAuthorRoutes(handler *gin.RouterGroup, ath usecases.Author, s usecases.Session, l logging.Logger) {
+func newAuthorRoutes(handler *gin.RouterGroup, ath usecases.Author, auth usecases.Auth, s usecases.Session, l logging.Logger) {
 	r := &authorRoutes{
-		ath: ath,
-		s:   s,
-		l:   l,
+		ath:  ath,
+		auth: auth,
+		s:    s,
+		l:    l,
 	}
 
 	h := handler.Group("/author")
 	{
 		authenticated := h.Group("", sessionMiddleware(l, s)) // add sessionMiddleware()
 		{
-			authenticated.DELETE("/:id")
+			authenticated.DELETE("/:id", r.Archive)
 
 		}
 		h.GET("/email", r.AuthorByEmail)
@@ -148,8 +150,30 @@ func (r *authorRoutes) Authors(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (r *authorRoutes) Archive(c *gin.Context, aid string) {
-	if err := r.ath.Delete(c.Request.Context(), aid, ""); err != nil {
+func (r *authorRoutes) Archive(c *gin.Context) {
+	sid, err := sessionID(c)
+	if err != nil {
+		r.l.Error(fmt.Errorf("http - v1 - ath - get: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	sess, err := r.s.GetByID(c.Request.Context(), sid)
+	if err != nil {
+		r.l.Error(fmt.Errorf("http - v1 - ath - get: %v", err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	aid := c.Param("id")
+	r.l.Infof("Session.AuthorID: %v, aid: %v", sess.AuthorID, aid)
+
+	if sess.AuthorID != aid {
+		r.l.Infof("Session.AuthorID: %v, aid: %v", sess.AuthorID, aid)
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	if err := r.ath.Delete(c.Request.Context(), aid, sid); err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - ath - get: %w", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return

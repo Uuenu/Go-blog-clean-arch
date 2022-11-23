@@ -33,7 +33,7 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecases.Auth, s usecases.Session
 		{
 			authorize.GET("/logout", r.logout)
 		}
-		h.POST("/singin", r.signin)
+		h.POST("/signin", r.signin)
 	}
 
 }
@@ -44,6 +44,7 @@ func (r *authRoutes) logout(c *gin.Context) {
 	if err != nil {
 		r.l.Error(fmt.Errorf("authRoutes - logout - sessionID. error: %v", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 	r.l.Infof("Session ID: %s", sid)
 	err2 := r.auth.Logout(c.Request.Context(), sid)
