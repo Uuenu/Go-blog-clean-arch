@@ -29,13 +29,13 @@ func newAuthorRoutes(handler *gin.RouterGroup, ath usecases.Author, auth usecase
 	{
 		authenticated := h.Group("", sessionMiddleware(l, s)) // add sessionMiddleware()
 		{
-			authenticated.DELETE("/:id", r.Archive)
+			authenticated.DELETE("/:id", r.archive)
 
 		}
-		h.GET("/email", r.AuthorByEmail)
-		h.POST("/signup", r.Singup)
-		h.GET("/:id", r.AuthorByID) // get by id
-		h.GET("", r.Authors)        //get all
+		h.GET("/email", r.authorByEmail)
+		h.POST("/signup", r.signup)
+		h.GET("/:id", r.authorByID) // get by id
+		h.GET("", r.authors)        //get all
 
 	}
 
@@ -47,7 +47,7 @@ type doSignupRequest struct {
 	Password string `json:"password,omitempty"`
 }
 
-func (r *authorRoutes) Singup(c *gin.Context) {
+func (r *authorRoutes) signup(c *gin.Context) {
 
 	var signup doSignupRequest
 	if err := c.ShouldBindJSON(&signup); err != nil {
@@ -94,7 +94,7 @@ type doResponseAuthor struct {
 	Email    string `bson:"email,omitempty"`
 }
 
-func (r *authorRoutes) AuthorByID(c *gin.Context) {
+func (r *authorRoutes) authorByID(c *gin.Context) {
 	aid := c.Param("id")
 
 	acc, err := r.ath.GetByID(c.Request.Context(), aid)
@@ -113,7 +113,7 @@ func (r *authorRoutes) AuthorByID(c *gin.Context) {
 
 }
 
-func (r *authorRoutes) AuthorByEmail(c *gin.Context) {
+func (r *authorRoutes) authorByEmail(c *gin.Context) {
 	email := "codyvangoth@gmail.com"
 
 	author, err := r.ath.GetByEmail(c.Request.Context(), email)
@@ -130,7 +130,7 @@ func (r *authorRoutes) AuthorByEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (r *authorRoutes) Authors(c *gin.Context) {
+func (r *authorRoutes) authors(c *gin.Context) {
 	authors, err := r.ath.GetAll(c.Request.Context())
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - ath - get: %w", err))
@@ -150,7 +150,7 @@ func (r *authorRoutes) Authors(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (r *authorRoutes) Archive(c *gin.Context) {
+func (r *authorRoutes) archive(c *gin.Context) {
 	sid, err := sessionID(c)
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - ath - get: %v", err))

@@ -21,20 +21,20 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 
 	h := handler.Group("/article")
 	{
-		h.GET("/:id", r.GetByID) // get by id
-		h.GET("")                //get all
+		h.GET("/:id", r.getByID) // get by id
+		h.GET("/all", r.all)     //get all
+		h.POST("", r.create)     // create
 
 		authorized := handler.Group("", sessionMiddleware(l, s))
 		{
-			authorized.POST("", r.create)       // create
-			authorized.PUT("/:id", r.Update)    //update article
-			authorized.DELETE("/:id", r.Delete) //delete by id
+			authorized.PUT("/:id", r.update)    //update article
+			authorized.DELETE("/:id", r.delete) //delete by id
 		}
 
 	}
 }
 
-func (r *articleRoutes) GetByID(c *gin.Context) {
+func (r *articleRoutes) getByID(c *gin.Context) {
 	articleID := c.Param("id")
 
 	acc, err := r.artcl.GetByID(c.Request.Context(), articleID)
@@ -89,7 +89,7 @@ func (r *articleRoutes) create(c *gin.Context) {
 
 }
 
-func (r *articleRoutes) GetAll(c *gin.Context) {
+func (r *articleRoutes) all(c *gin.Context) {
 	arcles, err := r.artcl.GetAll(c.Request.Context())
 
 	if err != nil {
@@ -101,7 +101,7 @@ func (r *articleRoutes) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, arcles)
 }
 
-func (r *articleRoutes) Update(c *gin.Context) {
+func (r *articleRoutes) update(c *gin.Context) {
 	panic("implement me")
 }
 
@@ -112,7 +112,7 @@ type doDeleteRequest struct {
 	AuthorID  string `json:"aid"`
 }
 
-func (r *articleRoutes) Delete(c *gin.Context) {
+func (r *articleRoutes) delete(c *gin.Context) {
 	var request doDeleteRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		// TODO logger and error response

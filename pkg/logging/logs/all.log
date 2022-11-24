@@ -532,3 +532,8 @@ time="2022-11-23T17:13:46+03:00" level=info msg="ObjectID: ObjectID(\"637e2a9a6d
 time="2022-11-23T17:13:46+03:00" level=info msg="SessionID: 637e2a9a6ddd207125ad71f1" func="go-blog-ca/internal/usecases/repo.(*SessionRepo).Create()" file="session_mongodb.go 35"
 time="2022-11-23T17:13:46+03:00" level=info msg="Session  From AuthUseCase: 4a1106cf-4865-4ab4-82ca-045da6d7e937" func="go-blog-ca/internal/usecases.(*AuthUseCase).EmailLogin()" file="auth.go 47"
 time="2022-11-23T17:13:46+03:00" level=info msg="Sess.id: 637e2a9a6ddd207125ad71f1" func="go-blog-ca/internal/controller/http/v1.(*authRoutes).signin()" file="auth.go 95"
+time="2022-11-23T22:13:00+03:00" level=info msg="We are here" func="go-blog-ca/internal/controller/http/v1.(*authRoutes).signin()" file="auth.go 77"
+time="2022-11-23T22:13:00+03:00" level=info msg="ObjectID: ObjectID(\"637e70bcdbb63c3930601520\")" func="go-blog-ca/internal/usecases/repo.(*SessionRepo).Create()" file="session_mongodb.go 34"
+time="2022-11-23T22:13:00+03:00" level=info msg="SessionID: 637e70bcdbb63c3930601520" func="go-blog-ca/internal/usecases/repo.(*SessionRepo).Create()" file="session_mongodb.go 35"
+time="2022-11-23T22:13:00+03:00" level=info msg="Session  From AuthUseCase: 4e6aaa12-0099-491a-a817-f5a0d1c217c4" func="go-blog-ca/internal/usecases.(*AuthUseCase).EmailLogin()" file="auth.go 47"
+time="2022-11-23T22:13:00+03:00" level=info msg="Sess.id: 637e70bcdbb63c3930601520" func="go-blog-ca/internal/controller/http/v1.(*authRoutes).signin()" file="auth.go 95"
