@@ -42,7 +42,7 @@ func (r *AuthorRepo) FindByID(ctx context.Context, id string) (entity.Author, er
 	if err != nil {
 		return entity.Author{}, fmt.Errorf("AuthorRepo - FindByID - ObjectID from Hex id:%s error: %v", id, err)
 	}
-
+	
 	result := r.collection.FindOne(ctx, bson.M{"_id": oid})
 
 	if result.Err() != nil {

@@ -161,7 +161,7 @@ func (r AuthorPostgresRepo) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("AuthorRepo - Delete - r.Builder.Delete. error: %v", err)
 	}
 
-	ct, err := r.Pool.Exec(ctx, sql, args...)
+	ct, err := r.Pool.Exec(context.Background(), sql, args...)
 	if err != nil {
 		return fmt.Errorf("AuthorRepo - Delete - r.Pool.Exec. error: %v", err)
 	}

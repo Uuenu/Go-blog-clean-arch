@@ -39,7 +39,7 @@ func (r ArticlePostgresRepo) Create(ctx context.Context, article entity.Article)
 
 	var articleID string
 
-	err = r.Pool.QueryRow(ctx, sql, args...).Scan(&articleID)
+	err = r.Pool.QueryRow(context.Background(), sql, args...).Scan(&articleID)
 	if err != nil {
 		var pgErr *pgconn.PgError
 

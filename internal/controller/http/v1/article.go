@@ -21,17 +21,22 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 
 	h := handler.Group("/article")
 	{
-		h.GET("/:id", r.getByID) // get by id
-		h.GET("/all", r.all)     //get all
-		h.POST("", r.create)     // create
+		h.GET("/id", r.getByID) // get by id
+		h.GET("/all", r.all)    //get all
 
-		authorized := handler.Group("", sessionMiddleware(l, s))
+		authorized := h.Group("", sessionMiddleware(l, s))
 		{
-			authorized.PUT("/:id", r.update)    //update article
-			authorized.DELETE("/:id", r.delete) //delete by id
+			authorized.GET("/hello", r.hello)
+			authorized.POST("/create", r.create)
+			authorized.PUT("", r.update)    //update article
+			authorized.DELETE("", r.delete) //delete by id
 		}
 
 	}
+}
+
+func (r *articleRoutes) hello(c *gin.Context) {
+	c.JSON(http.StatusOK, "Hello")
 }
 
 func (r *articleRoutes) getByID(c *gin.Context) {
@@ -66,9 +71,16 @@ func (r *articleRoutes) create(c *gin.Context) {
 	if err != nil {
 		r.l.Error(fmt.Errorf("articleRoutes - create - sessionID. error: %v", err))
 		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
-	request.AuthorID = aid
+	// request.AuthorID = aid
+
+	if aid != request.AuthorID {
+		r.l.Error(fmt.Errorf("articleRoutes - create - aid != request.AuthorID. "))
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
 
 	article, err := r.artcl.Create(
 		c.Request.Context(),

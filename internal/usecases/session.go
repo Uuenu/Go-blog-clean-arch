@@ -7,6 +7,7 @@ import (
 	"go-blog-ca/internal/domain/entity"
 	"go-blog-ca/pkg/apperrors"
 	"go-blog-ca/pkg/logging"
+	"time"
 )
 
 type SessionUseCase struct {
@@ -29,7 +30,10 @@ func (uc *SessionUseCase) Create(ctx context.Context, aid string) (entity.Sessio
 		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - entity.NewSession: %w", err)
 	}
 
-	sid, err := uc.repo.Create(ctx, sess)
+	repoCtx, cancel := context.WithTimeout(ctx, time.Second*1)
+	defer cancel()
+
+	sid, err := uc.repo.Create(repoCtx, sess)
 
 	if err != nil {
 		return entity.Session{}, fmt.Errorf("SessionUseCase - Create - uc.repo.Create: %w", err)

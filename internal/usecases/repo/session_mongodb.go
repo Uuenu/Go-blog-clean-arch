@@ -25,6 +25,9 @@ func NewSessionRepo(db *mongo.Database, l logging.Logger) *SessionRepo {
 }
 
 func (r *SessionRepo) Create(ctx context.Context, s entity.Session) (string, error) {
+
+	//time.Sleep(time.Second * 10)
+
 	result, err := r.collection.InsertOne(ctx, s)
 	if err != nil {
 		return "", fmt.Errorf("SessionRepo - Create - r.collection.InsertOne: %w", err)
