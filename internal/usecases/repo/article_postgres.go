@@ -8,8 +8,10 @@ import (
 	"go-blog-ca/pkg/apperrors"
 	"go-blog-ca/pkg/postgres"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v4"
 )
 
 const (
@@ -57,7 +59,33 @@ func (r ArticlePostgresRepo) Create(ctx context.Context, article entity.Article)
 }
 
 func (r ArticlePostgresRepo) FindById(ctx context.Context, id string) (entity.Article, error) {
-	panic("Implement me")
+	sql, args, err := r.Builder.Select("id, author_id, header, text").
+		From(_articleTable).
+		Where(squirrel.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		return entity.Article{}, fmt.Errorf("ArticleRepo - FindByID - r.Builder.Select(). error: %v", err)
+	}
+
+	article := entity.Article{}
+
+	err = r.Pool.QueryRow(ctx, sql, args...).Scan(
+		&article.ID,
+		&article.AuthorID,
+		&article.Header,
+		&article.Text,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			// TODO replace author error on article
+			return entity.Article{}, fmt.Errorf("ArticleRepo - FindByID - r.Pool.QueryRow. error: %v", apperrors.ErrAuthorNotFound)
+		}
+
+		return entity.Article{}, fmt.Errorf("ArticleRepo - FindByID - r.Pool.QueryRow. error: %v", err)
+	}
+
+	return article, nil
 }
 
 func (r ArticlePostgresRepo) FindAll(ctx context.Context) ([]entity.Article, error) {

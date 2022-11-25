@@ -54,7 +54,7 @@ func (r *articleRoutes) getByID(c *gin.Context) {
 }
 
 type doCreateRequest struct {
-	AuthorID string `json:"author_id" binding:"required"`
+	AuthorID string `json:"author_id" binding:"-"`
 	Header   string `json:"header" binding:"required"`
 	Text     string `json:"text" binding:"required"`
 }
@@ -74,13 +74,13 @@ func (r *articleRoutes) create(c *gin.Context) {
 		return
 	}
 
-	// request.AuthorID = aid
+	request.AuthorID = aid
 
-	if aid != request.AuthorID {
-		r.l.Error(fmt.Errorf("articleRoutes - create - aid != request.AuthorID. "))
-		c.AbortWithStatus(http.StatusForbidden)
-		return
-	}
+	// if aid != request.AuthorID {
+	// 	r.l.Error(fmt.Errorf("articleRoutes - create - aid != request.AuthorID. "))
+	// 	c.AbortWithStatus(http.StatusForbidden)
+	// 	return
+	// }
 
 	article, err := r.artcl.Create(
 		c.Request.Context(),
