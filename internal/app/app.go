@@ -37,8 +37,6 @@ func Run(cfg *config.Config) {
 		l.Errorf("app - Run - postgres.New. error: %v", err)
 	}
 
-	//Use case
-
 	// Repo based on Mongodb
 	sessionRepo := repo.NewSessionRepo(mdb, l)
 	//authorRepo := repo.NewAuthorRepo(mdb)
@@ -48,6 +46,7 @@ func Run(cfg *config.Config) {
 	authorRepo := repo.New(postgres)
 	articleRepo := repo.NewArticlePostgresRepo(postgres)
 
+	//Use case
 	sessionUseCase := usecases.NewSessionUseCase(sessionRepo, cfg, l)
 	authorUseCase := usecases.NewAuthorUseCase(authorRepo, sessionUseCase)
 	authUseCase := usecases.NewAuthUseCase(authorUseCase, sessionUseCase, l)
