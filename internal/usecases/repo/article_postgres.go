@@ -89,9 +89,54 @@ func (r ArticlePostgresRepo) FindById(ctx context.Context, id string) (entity.Ar
 }
 
 func (r ArticlePostgresRepo) FindAll(ctx context.Context) ([]entity.Article, error) {
-	panic("Implement me")
+	sql, _, err := r.Builder.Select("id, author_id, header, text").
+		From(_articleTable).
+		ToSql()
+
+	if err != nil {
+		return nil, fmt.Errorf("ArticleRepo - FindAll - r.Builder.Select(). error: %v", err)
+	}
+
+	rows, err := r.Pool.Query(ctx, sql, nil...)
+	if err != nil {
+		return nil, fmt.Errorf("ArticleRepo - GetAll - r.Pool.Query, error: %v", err)
+	}
+	defer rows.Close()
+
+	articles := make([]entity.Article, 0, _defaultEntityCap)
+
+	for rows.Next() {
+		art := entity.Article{}
+
+		err := rows.Scan(&art.ID, &art.AuthorID, &art.Header, &art.Text)
+		if err != nil {
+			return nil, fmt.Errorf("ArticleRepo - GetAll - rows.Scan. error: %v", err)
+		}
+
+		articles = append(articles, art)
+	}
+
+	return articles, nil
 }
 
 func (r ArticlePostgresRepo) Delete(ctx context.Context, id string, aid string) error {
-	panic("Implement me")
+	sql, args, err := r.Builder.Delete("").
+		From(_articleTable).
+		Where(squirrel.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		return fmt.Errorf("ArticleRepo - Delete - r.Builder.Delete. error: %v", err)
+	}
+
+	ct, err := r.Pool.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return fmt.Errorf("ArticleRepo - Delete - r.Pool.Exec. error: %v", err)
+	}
+
+	if !ct.Delete() {
+		return fmt.Errorf("AuthorRepo - Delete - r.Pool.Exec. error: %v", apperrors.ErrArticleNotFound)
+	}
+
+	return nil
 }
