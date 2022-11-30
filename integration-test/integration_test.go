@@ -79,8 +79,8 @@ func TestHTTPDoSignup(t *testing.T) {
 		"password": "qwerty"
 	}`
 	Test(t,
-		Description("DoTranslate Fail"),
-		Post(basePath+"/translation/do-translate"),
+		Description("DoSignup Fail"),
+		Post(basePath+"/author/signup"),
 		Send().Headers("Content-Type").Add("application/json"),
 		Send().Body().String(body),
 		Expect().Status().Equal(http.StatusBadRequest),
