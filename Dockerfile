@@ -1,12 +1,18 @@
-FROM golang:1.19
-
-WORKDIR /go-blog-ca
-
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
-
+# Build stage
+FROM golang:1.19-alpine3.16 AS builder
+WORKDIR /cmd/app
 COPY . .
-RUN go build -v -o /go-blog-ca/internal/app ./...
+RUN go build -o main main.go
 
-CMD ["app"]
+# Run stage
+FROM alpine:3.16
+WORKDIR /app
+COPY --from=builder /cmd/app/main .
+COPY app.env .
+COPY start.sh .
+COPY wait-for.sh .
+COPY db/migration ./db/migration
+
+EXPOSE 8080
+CMD [ "/cmd/app/main" ]
+ENTRYPOINT [ "/app/start.sh" ]
