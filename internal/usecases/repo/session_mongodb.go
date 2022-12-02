@@ -108,7 +108,7 @@ func (r *SessionRepo) Delete(ctx context.Context, sid string) error {
 }
 
 func (r *SessionRepo) DeleteAll(ctx context.Context, aid, currSid string) error {
-	// delete add authors session excluding current session
+	// delete all authors session excluding current session
 	author_oid, err := primitive.ObjectIDFromHex(aid)
 	if err != nil {
 		return fmt.Errorf("SessionRepo - DeleteAll - ObjectID from Hex. error: %v", err)
