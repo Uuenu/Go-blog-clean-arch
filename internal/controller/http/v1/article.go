@@ -26,7 +26,7 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 
 		authorized := h.Group("", sessionMiddleware(l, s))
 		{
-			authorized.GET("/hello", r.hello)
+			//authorized.GET("/hello", r.hello)
 			authorized.POST("/create", r.create)
 			authorized.PUT("", r.update)    //update article
 			authorized.DELETE("", r.delete) //delete by id
