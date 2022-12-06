@@ -35,9 +35,9 @@ func newArticleRoutes(handler *gin.RouterGroup, artcl usecases.Article, s usecas
 	}
 }
 
-func (r *articleRoutes) hello(c *gin.Context) {
-	c.JSON(http.StatusOK, "Hello")
-}
+// func (r *articleRoutes) hello(c *gin.Context) {
+// 	c.JSON(http.StatusOK, "Hello")
+// }
 
 func (r *articleRoutes) getByID(c *gin.Context) {
 	articleID := c.Param("id")
