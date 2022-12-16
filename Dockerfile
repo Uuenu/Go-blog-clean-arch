@@ -1,18 +1,21 @@
-# Build stage
-FROM golang:1.19-alpine3.16 AS builder
-WORKDIR /cmd/app
-COPY . .
-RUN go build -o main main.go
+# Step 1: Modules caching
+FROM golang:1.17.1-alpine3.14 as modules
+COPY go.mod go.sum /modules/
+WORKDIR /modules
+RUN go mod download
 
-# Run stage
-FROM alpine:3.16
+# Step 2: Builder
+FROM golang:1.17.1-alpine3.14 as builder
+COPY --from=modules /go/pkg /go/pkg
+COPY . /app
 WORKDIR /app
-COPY --from=builder /cmd/app/main .
-COPY app.env .
-COPY start.sh .
-COPY wait-for.sh .
-COPY db/migration ./db/migration
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -tags migrate -o /bin/app ./cmd/app
 
-EXPOSE 3000
-CMD [ "/cmd/app/main" ]
-ENTRYPOINT [ "/app/start.sh" ]
+# Step 3: Final
+FROM scratch
+COPY --from=builder /app/config /config
+COPY --from=builder /app/migrations /migrations
+COPY --from=builder /bin/app /app
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+CMD ["/app"]

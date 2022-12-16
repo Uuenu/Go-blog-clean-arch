@@ -23,14 +23,14 @@ func newSessionRoutes(handler *gin.RouterGroup, s usecases.Session, a usecases.A
 	h := handler.Group("/session", sessionMiddleware(l, s)) // sessionMiddleware()
 	{
 
-		h.GET("/", r.SessionByID)
-		h.DELETE("/:sessionID", r.Terminate)
-		h.DELETE("/", r.TerminateAll)
+		h.GET("/", r.sessionByID)
+		h.DELETE("/:sessionID", r.terminate)
+		h.DELETE("/", r.terminateAll)
 	}
 
 }
 
-func (r *sessionRoutes) SessionByID(c *gin.Context) { // change on get
+func (r *sessionRoutes) sessionByID(c *gin.Context) { // change on get
 	sid, err := sessionID(c)
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - sessionID. error: %v", err))
@@ -50,7 +50,7 @@ func (r *sessionRoutes) SessionByID(c *gin.Context) { // change on get
 	c.JSON(http.StatusOK, sess)
 }
 
-func (r *sessionRoutes) Terminate(c *gin.Context) {
+func (r *sessionRoutes) terminate(c *gin.Context) {
 	currID, err := sessionID(c)
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - Terminate - sessionID. error: %v", err))
@@ -74,7 +74,7 @@ func (r *sessionRoutes) Terminate(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-func (r *sessionRoutes) TerminateAll(c *gin.Context) {
+func (r *sessionRoutes) terminateAll(c *gin.Context) {
 	currID, err := sessionID(c)
 	if err != nil {
 		r.l.Error(fmt.Errorf("http - v1 - terminate - sessionID. error: %v", err))
