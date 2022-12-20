@@ -13,37 +13,20 @@ services:
     ports:
       - 5432:5432
 
-  # rabbitmq:
-  #   container_name: rabbitmq
-  #   image: rabbitmq:3.8.12-management
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-
-  
-  mongodb:
-    container_name: mongodb
-    network_mode: host
-    image : mongo
-    restart: always
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.8.12-management
     ports:
-      - "27017:27017"
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-      - MONGODB_DATABASE=Blog
-      - MONGO_INITDB_ROOT_USERNAME=localhost
-      - MONGO_INITDB_ROOT_PASSWORD=
-    volumes:
-      - .data/db:/data/db
+      - 5672:5672
+      - 15672:15672
 
   app:
     build: .
     container_name: app
     image: app
     environment:
-      PG_URL: 'postgres://postgres:postgres@postgres:5432/postgres'
-      #RMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+      PG_URL: 'postgres://user:pass@postgres:5432/postgres'
+      RMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
     ports:
       - 8080:8080
     depends_on:

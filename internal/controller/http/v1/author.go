@@ -47,6 +47,17 @@ type doSignupRequest struct {
 	Password string `json:"password,omitempty"`
 }
 
+// @Summary     Signup
+// @Description Signup on Blog
+// @ID          do-signup
+// @Tags  	    signup
+// @Accept      json
+// @Produce     json
+// @Param       request body doSignupRequest true ""
+// @Success     200 {object} response
+// @Failure     400 {object} response
+// @Failure     500 {object} response
+// @Router     /author/signup [post]
 func (r *authorRoutes) signup(c *gin.Context) {
 
 	var signup doSignupRequest

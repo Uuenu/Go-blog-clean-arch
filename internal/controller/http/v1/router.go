@@ -10,6 +10,13 @@ import (
 
 const apiPath = "/v1"
 
+// NewRouter -.
+// Swagger spec:
+// @title       Blog based on Clean Architecture
+// @description Using a blog service as an example
+// @version     1.0
+// @host        localhost:8080
+// @BasePath    /v1
 func NewRouter(handler *gin.Engine, l logging.Logger, author usecases.Author,
 	artcl usecases.Article, auth usecases.Auth, session usecases.Session, c *config.Config) {
 
