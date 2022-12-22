@@ -13,6 +13,22 @@ services:
     ports:
       - 5432:5432
 
+  mongodb:
+    container_name: mongodb
+    network_mode: host
+    image : mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_DATABASE=blog
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    volumes:
+      - .data/db:/data/db
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.8.12-management
