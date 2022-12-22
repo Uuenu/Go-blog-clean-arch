@@ -3,6 +3,6 @@
 # Quick start
 
 ````
-    make compose-up
-    make run 
+$ make compose-up
+$ make run 
 ````
