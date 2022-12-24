@@ -8,8 +8,8 @@ services:
       - pg-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'postgres'
+      POSTGRES_PASSWORD: 'qwerty'
+      POSTGRES_DB: 'go-blog-ca'
     ports:
       - 5432:5432
 
@@ -23,42 +23,42 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
-      - MONGODB_DATABASE=blog
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=secret
+      - MONGODB_DATABASE=user-service
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
     volumes:
       - .data/db:/data/db
 
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3.8.12-management
-    ports:
-      - 5672:5672
-      - 15672:15672
+  # rabbitmq:
+  #   container_name: rabbitmq
+  #   image: rabbitmq:3.8.12-management
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
 
   app:
     build: .
     container_name: app
     image: app
     environment:
-      PG_URL: 'postgres://user:pass@postgres:5432/postgres'
-      RMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+      PG_URL: 'postgres://user:qwerty@postgres:5432/postgres'
+     #RMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
     ports:
       - 8080:8080
     depends_on:
       - postgres
       - mongodb 
-      - rabbitmq
+      #- rabbitmq
 
 
-  integration:
-    build:
-      context: .
-      dockerfile: integration-test/Dockerfile
-    container_name: integration
-    image: integration
-    depends_on:
-      - app
+  # integration:
+  #   build:
+  #     context: .
+  #     dockerfile: integration-test/Dockerfile
+  #   container_name: integration
+  #   image: integration
+  #   depends_on:
+  #     - app
 
 volumes:
   pg-data:

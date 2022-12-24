@@ -1,5 +1,5 @@
 # Step 1: Modules caching
-FROM golang:1.17.1-alpine3.14 as modules
+FROM alpine:latest as module 
 COPY go.mod go.sum /modules/
 WORKDIR /modules
 RUN go mod download
