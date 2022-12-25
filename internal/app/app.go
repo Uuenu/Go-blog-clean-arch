@@ -25,7 +25,7 @@ func Run(cfg *config.Config) {
 	mongodbClient, err := mongodb.NewClient(context.TODO(), cfg.Mongodb.Host, cfg.Mongodb.Port, cfg.Mongodb.Username, cfg.Mongodb.Password,
 		cfg.Mongodb.Database, cfg.Mongodb.AuthDb)
 	if err != nil {
-		panic("implement me with logger")
+		l.Errorf("mongodbClient error:%v", err)
 	}
 	mdb := mongodbClient.Database(cfg.Mongodb.Database)
 
